@@ -69,62 +69,64 @@ ul{list-style:none;margin:0;padding:0}
 const { useState, useEffect, useRef, useCallback, useContext, createContext } = React;
 
 /* ────────── Image base ────────── */
-const IMGS = {
-  'home-hero.jpg':       'https://images.unsplash.com/photo-1631982690223-8aa4be0a2497?w=1400&q=80',
-  'charcoal-texture.jpg':'https://images.unsplash.com/photo-1612832164313-ac0d25fe4dac?w=1200&q=80',
-  'piece-01.jpg':        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80',
-  'piece-02.jpg':        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80',
-  'piece-03.jpg':        'https://images.unsplash.com/photo-1603561596112-0a132b757442?w=800&q=80',
-  'piece-04.jpg':        'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80',
-  'piece-05.jpg':        'https://images.unsplash.com/photo-1515562141589-67f0d569b6c6?w=800&q=80',
-  'piece-06.jpg':        'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&q=80',
-  'piece-07.jpg':        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80',
-  'piece-08.jpg':        'https://images.unsplash.com/photo-1609042890394-78cfaaf9ff6a?w=800&q=80',
-  'about-seascape.jpg':  'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&q=80',
-  'about-craftsman.jpg': 'https://images.unsplash.com/photo-1618354691792-d1d42acfd860?w=1000&q=80',
-  'about-pendant-making.jpg':'https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1000&q=80',
-  'about-ring-charcoal.jpg':'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1000&q=80',
-  'brush-wordmark.jpg':  'https://images.unsplash.com/photo-1618354691438-25bc04584c23?w=800&q=80',
-  'craft-hero.jpg':      'https://images.unsplash.com/photo-1559304787-e6b144a8e1bc?w=1400&q=80',
-  'craft-portrait.jpg':  'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=1000&q=80',
-  'contact-hero.jpg':    'https://images.unsplash.com/photo-1591209627710-40edc1596bf0?w=1400&q=80',
-  'product-ring-main.jpg':'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1000&q=80',
-  'charcoal-band.jpg':   'https://images.unsplash.com/photo-1612832164313-ac0d25fe4dac?w=1200&q=80',
+const I = './img/';
+const P = './img/products/';
+function img(name){ return I + name; }
+
+/* Product collection images */
+const PROD_IMG = {
+  line:     P+'01-line-ring.png',
+  section:  P+'02-cross-section-ring.png',
+  crack:    P+'03-crack-ring.png',
+  inlay:    P+'05-inlay-ring.png',
+  hammered: P+'07-hammered-ring.png',
+  epoxy:    P+'08-epoxy-ring.png',
 };
-function img(name){ return IMGS[name] || './design_system/assets/img/'+name; }
 
 /* ────────── Data ────────── */
 const DATA = {
   featured: [
-    { img: img('piece-03.jpg'), name:'Scale Ring', nameJa:'スケールリング', material:'Silver925 / Binchotan', price:'¥49,500' },
-    { img: img('piece-02.jpg'), name:'Scale Pendant', nameJa:'スケールペンダント', material:'Silver925', price:'¥38,500' },
-    { img: img('piece-07.jpg'), name:'Scale Bangle', nameJa:'スケールバングル', material:'Silver925', price:'¥88,500' },
+    { img: PROD_IMG.line, name:'Line Ring', nameJa:'ラインリング', material:'Silver925 / Binchotan', price:'¥49,500' },
+    { img: PROD_IMG.crack, name:'Crack Ring', nameJa:'クラックリング', material:'Silver925 / Binchotan', price:'¥55,000' },
+    { img: PROD_IMG.section, name:'Cross-Section Ring', nameJa:'断面リング', material:'Silver925 / Binchotan', price:'¥63,000' },
   ],
   collections: [
-    { img: img('piece-03.jpg'), label:'RING', ja:'リング' },
-    { img: img('piece-02.jpg'), label:'NECKLACE', ja:'ネックレス' },
-    { img: img('piece-07.jpg'), label:'BANGLE', ja:'バングル' },
-    { img: img('piece-06.jpg'), label:'EARRINGS', ja:'ピアス' },
+    { img: PROD_IMG.line, label:'LINE', ja:'ラインリング' },
+    { img: PROD_IMG.section, label:'CROSS-SECTION', ja:'断面リング' },
+    { img: PROD_IMG.crack, label:'CRACK', ja:'クラックリング' },
+    { img: PROD_IMG.inlay, label:'INLAY', ja:'炭粒子インレイ' },
+    { img: PROD_IMG.hammered, label:'HAMMERED', ja:'燻し銀 / 槌目' },
+    { img: PROD_IMG.epoxy, label:'EPOXY', ja:'エポキシ封入' },
   ],
   products: [
-    { img: img('piece-03.jpg'), name:'Scale Ring', nameJa:'スケールリング', material:'Silver925', price:'¥49,500', cat:'RING' },
-    { img: img('piece-04.jpg'), name:'Organic Ring', nameJa:'オーガニックリング', material:'Silver925', price:'¥27,500', cat:'RING' },
-    { img: img('piece-02.jpg'), name:'Scale Pendant', nameJa:'スケールペンダント', material:'Silver925', price:'¥38,500', cat:'NECKLACE' },
-    { img: img('piece-05.jpg'), name:'Organic Pendant', nameJa:'オーガニックペンダント', material:'Silver925', price:'¥33,000', cat:'NECKLACE' },
-    { img: img('piece-07.jpg'), name:'Scale Bangle', nameJa:'スケールバングル', material:'Silver925', price:'¥88,500', cat:'BANGLE' },
-    { img: img('piece-01.jpg'), name:'Line Bangle', nameJa:'ラインバングル', material:'Silver925', price:'¥72,000', cat:'BANGLE' },
-    { img: img('piece-06.jpg'), name:'Scale Earrings', nameJa:'スケールピアス', material:'Silver925', price:'¥31,900', cat:'EARRINGS' },
-    { img: img('piece-08.jpg'), name:'Texture Ring', nameJa:'テクスチャーリング', material:'Silver925', price:'¥29,700', cat:'RING' },
+    { img: PROD_IMG.line, name:'Line Ring - Center', nameJa:'センターライン', material:'Silver925 / Binchotan', price:'¥49,500', cat:'LINE' },
+    { img: PROD_IMG.line, name:'Line Ring - Double', nameJa:'ダブルライン', material:'Silver925 / Binchotan', price:'¥52,000', cat:'LINE' },
+    { img: PROD_IMG.line, name:'Line Ring - Diagonal', nameJa:'斜めライン', material:'Silver925 / Binchotan', price:'¥52,000', cat:'LINE' },
+    { img: PROD_IMG.section, name:'Round Cross-Section', nameJa:'ラウンド断面', material:'Silver925 / Binchotan', price:'¥63,000', cat:'CROSS-SECTION' },
+    { img: PROD_IMG.section, name:'Oval Cross-Section', nameJa:'オーバル断面', material:'Silver925 / Binchotan', price:'¥63,000', cat:'CROSS-SECTION' },
+    { img: PROD_IMG.section, name:'Rectangle Cross-Section', nameJa:'レクタングル断面', material:'Silver925 / Binchotan', price:'¥66,000', cat:'CROSS-SECTION' },
+    { img: PROD_IMG.crack, name:'Straight Crack', nameJa:'直線クラック', material:'Silver925 / Binchotan', price:'¥55,000', cat:'CRACK' },
+    { img: PROD_IMG.crack, name:'Lightning Crack', nameJa:'稲妻クラック', material:'Silver925 / Binchotan', price:'¥58,000', cat:'CRACK' },
+    { img: PROD_IMG.crack, name:'Fault Crack', nameJa:'断層クラック', material:'Silver925 / Binchotan', price:'¥58,000', cat:'CRACK' },
+    { img: PROD_IMG.inlay, name:'Square Inlay Top', nameJa:'スクエア粒子トップ', material:'Silver925 / Binchotan', price:'¥72,000', cat:'INLAY' },
+    { img: PROD_IMG.inlay, name:'Oval Inlay Top', nameJa:'オーバル粒子トップ', material:'Silver925 / Binchotan', price:'¥72,000', cat:'INLAY' },
+    { img: PROD_IMG.inlay, name:'Band Full Inlay', nameJa:'バンド全面粒子', material:'Silver925 / Binchotan', price:'¥68,000', cat:'INLAY' },
+    { img: PROD_IMG.hammered, name:'Hammered × Black Line', nameJa:'槌目×黒ライン', material:'Silver925 / Binchotan', price:'¥58,000', cat:'HAMMERED' },
+    { img: PROD_IMG.hammered, name:'Smoked Koumaru', nameJa:'燻し甲丸', material:'Silver925 / Binchotan', price:'¥55,000', cat:'HAMMERED' },
+    { img: PROD_IMG.hammered, name:'Hammered Wide', nameJa:'槌目ワイド', material:'Silver925 / Binchotan', price:'¥62,000', cat:'HAMMERED' },
+    { img: PROD_IMG.epoxy, name:'Clear Dome Epoxy', nameJa:'透明ドーム封入', material:'Silver925 / Binchotan', price:'¥66,000', cat:'EPOXY' },
+    { img: PROD_IMG.epoxy, name:'Smoke Epoxy', nameJa:'スモーク封入', material:'Silver925 / Binchotan', price:'¥66,000', cat:'EPOXY' },
+    { img: PROD_IMG.epoxy, name:'Flat Epoxy Top', nameJa:'フラット封入トップ', material:'Silver925 / Binchotan', price:'¥63,000', cat:'EPOXY' },
   ],
   archive: [
-    { img: img('piece-01.jpg'), no:'Archive No.063', title:'Scale Ring - Black', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: img('piece-02.jpg'), no:'Archive No.062', title:'Scale Pendant', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: img('piece-07.jpg'), no:'Archive No.061', title:'Scale Bangle', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: img('piece-04.jpg'), no:'Archive No.060', title:'Organic Ring', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: img('piece-05.jpg'), no:'Archive No.059', title:'Organic Pendant', year:'2023', material:'SILVER 925 / BINCHOTAN' },
-    { img: img('piece-08.jpg'), no:'Archive No.058', title:'Layer Ring', year:'2023', material:'SILVER 925 / BINCHOTAN' },
-    { img: img('piece-03.jpg'), no:'Archive No.057', title:'Texture Ring', year:'2023', material:'SILVER 950 / BINCHOTAN' },
-    { img: img('piece-06.jpg'), no:'Archive No.056', title:'Line Bangle', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.crack, no:'Archive No.063', title:'直線クラック', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.section, no:'Archive No.062', title:'ラウンド断面', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.epoxy, no:'Archive No.061', title:'透明ドーム封入', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.line, no:'Archive No.060', title:'センターライン', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.inlay, no:'Archive No.059', title:'スクエア粒子トップ', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.hammered, no:'Archive No.058', title:'槌目×黒ライン', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.crack, no:'Archive No.057', title:'稲妻クラック', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: PROD_IMG.section, no:'Archive No.056', title:'オーバル断面', year:'2023', material:'SILVER 925 / BINCHOTAN' },
   ],
   process: [
     { n:'01', t:'備長炭の選定', d:'長年の経験から、形状・割れ・質感などを見極め、作品にふさわしい備長炭を選び抜きます。' },
@@ -141,10 +143,10 @@ const DATA = {
     { code:'PLATINUM', name:'プラチナ', en:'Platinum', oneOfOne:false, desc:'希少で変質しにくい白金。静かで深い輝きが、造形の陰影を引き立てます。', img: img('piece-08.jpg') },
   ],
   journal: [
-    { img: img('piece-03.jpg'), cat:'PRODUCT', date:'2026.07.12', title:'新作「Scale Ring」公開' },
+    { img: PROD_IMG.crack, cat:'PRODUCT', date:'2026.07.12', title:'新作「クラックリング」公開' },
     { img: img('craft-portrait.jpg'), cat:'CRAFTSMANSHIP', date:'2026.06.28', title:'職人の手仕事について' },
     { img: img('contact-hero.jpg'), cat:'EVENT', date:'2026.06.05', title:'POPUP STORE TOKYO 開催' },
-    { img: img('piece-05.jpg'), cat:'STORY', date:'2026.05.20', title:'なぜ、備長炭なのか' },
+    { img: PROD_IMG.section, cat:'STORY', date:'2026.05.20', title:'なぜ、備長炭なのか' },
   ],
   news: [
     { date:'2026.07.12', title:'POPUP STORE TOKYO' },
@@ -154,8 +156,8 @@ const DATA = {
 };
 const FOOTER_COLS = [
   { head:'ABOUT', links:['ブランドについて','素材について','クラフトマンシップ','よくあるご質問'] },
-  { head:'COLLECTION', links:['リング','ネックレス','バングル','ピアス'] },
-  { head:'ARCHIVE', links:['すべての作品','リング','ネックレス','バングル'] },
+  { head:'COLLECTION', links:['ラインリング','断面リング','クラックリング','炭粒子インレイ','燻し銀/槌目','エポキシ封入'] },
+  { head:'ARCHIVE', links:['すべての作品','ラインリング','クラックリング','断面リング'] },
   { head:'CRAFTSMANSHIP', links:['制作について','職人の想い','備長炭について'] },
   { head:'JOURNAL', links:['ニュース','イベント情報','制作記録','読み物'] },
   { head:'CONTACT', links:['お問い合わせ','プライバシーポリシー','特定商取引法'] },
@@ -474,7 +476,7 @@ function HomeScreen({go,openProduct}){
 /* ────────── COLLECTION ────────── */
 function CollectionScreen({go,openProduct}){
   const {mob,tab}=useVP();
-  const cats=['ALL','RING','NECKLACE','BANGLE','EARRINGS'];
+  const cats=['ALL','LINE','CROSS-SECTION','CRACK','INLAY','HAMMERED','EPOXY'];
   const [cat,setCat]=useState('ALL');
   const list=cat==='ALL'?DATA.products:DATA.products.filter(p=>p.cat===cat);
   return <div>
@@ -572,7 +574,7 @@ function ArchiveScreen({go,openArchive}){
     <Section py="clamp(40px,5vw,80px)">
       <div style={{display:'grid',gridTemplateColumns:mob||tab?'1fr':'180px 1fr',gap:mob?0:'clamp(28px,4vw,56px)',alignItems:'start'}}>
         {!mob&&!tab&&<aside>
-          {[['CATEGORY',['ALL','RING','NECKLACE','BANGLE','EARRINGS','OTHER']],['MATERIAL',['SILVER 925','SILVER 950','K18 GOLD','PLATINUM','BINCHOTAN']],['YEAR',['2024','2023','2022','2021','2020']]].map(([head,items])=><div key={head} style={{marginBottom:36}}><div style={{display:'flex',alignItems:'center',gap:14,marginBottom:18}}><span style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-700)'}}>{head}</span><span style={{flex:1,height:1,background:'var(--ink-100)'}}/></div><ul style={{display:'flex',flexDirection:'column',gap:11}}>{items.map(it=><li key={it}><span style={{fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.08em',color:'var(--ink-500)'}}>{it}</span></li>)}</ul></div>)}
+          {[['CATEGORY',['ALL','LINE','CROSS-SECTION','CRACK','INLAY','HAMMERED','EPOXY']],['MATERIAL',['SILVER 925','SILVER 950','K18 GOLD','PLATINUM','BINCHOTAN']],['YEAR',['2024','2023','2022','2021','2020']]].map(([head,items])=><div key={head} style={{marginBottom:36}}><div style={{display:'flex',alignItems:'center',gap:14,marginBottom:18}}><span style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-700)'}}>{head}</span><span style={{flex:1,height:1,background:'var(--ink-100)'}}/></div><ul style={{display:'flex',flexDirection:'column',gap:11}}>{items.map(it=><li key={it}><span style={{fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.08em',color:'var(--ink-500)'}}>{it}</span></li>)}</ul></div>)}
           <div style={{border:'1px solid var(--ink-100)',padding:20}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--ink-400)',marginBottom:10}}>ABOUT ARCHIVE</div><p style={{fontFamily:'"Shippori Mincho",serif',fontSize:11.5,lineHeight:1.95,color:'var(--ink-500)',margin:0}}>アーカイブ作品は備長炭の一点物のため、再販・再制作は行っておりません。</p></div>
         </aside>}
         <div>
