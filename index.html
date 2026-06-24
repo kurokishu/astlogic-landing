@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstLogic — 自然が創り出す、唯一無二の造形美</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Shippori+Mincho:wght@400;500;600;700&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['"Cormorant Garamond"', '"Shippori Mincho"', 'serif'],
+        serif: ['"EB Garamond"', '"Shippori Mincho"', 'serif'],
+        jp: ['"Shippori Mincho"', '"EB Garamond"', 'serif'],
+        logo: ['"Cinzel"', '"Cormorant Garamond"', 'serif'],
+      },
+      maxWidth: { site: '1440px', text: '720px' },
+    }
+  }
+}
+</script>
+
+<!-- Design tokens -->
+<style>
+:root {
+  --ink-900:#0A0A0A; --ink-800:#141414; --ink-700:#1C1C1A; --ink-600:#3A3A38;
+  --ink-500:#6B6A66; --ink-400:#8E8C87; --ink-300:#B6B3AD; --ink-200:#D8D5CF; --ink-100:#E7E4DE;
+  --paper-000:#FFFFFF; --paper-050:#FAF9F7; --paper-100:#F4F3F0; --paper-150:#ECEAE5;
+  --silver-light:#D9D9DA; --silver-mid:#A8A8AB; --silver-dark:#6E6E72;
+  --sold-out:#9A9893;
+  --text-on-dark:#F2F1EE; --text-on-dark-s:rgba(242,241,238,0.70); --text-on-dark-m:rgba(242,241,238,0.48);
+  --line-on-dark:rgba(242,241,238,0.22);
+  --scrim-full:linear-gradient(180deg,rgba(10,10,10,0.20) 0%,rgba(10,10,10,0.50) 100%);
+  --gutter:clamp(20px,5vw,80px); --section-y:clamp(64px,9vw,160px); --header-h:88px;
+  --ease-out:cubic-bezier(0.22,1,0.36,1); --dur-fast:240ms; --dur-base:480ms; --dur-reveal:1200ms;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper-050);color:var(--ink-700);font-family:'Shippori Mincho','EB Garamond',serif;font-size:1rem;line-height:1.7;letter-spacing:0.08em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--ink-900);color:var(--paper-000)}
+h1,h2,h3,h4{font-family:'Cormorant Garamond','Shippori Mincho',serif;font-weight:400;letter-spacing:0.04em;line-height:1.12;margin:0}
+ul{list-style:none;margin:0;padding:0}
+</style>
+
+<!-- React -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.26.9/babel.min.js" crossorigin></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+/* ================================================================
+   AstLogic — Full-site single-page application
+   React + Tailwind CSS · responsive 375px–1280px+
+   ================================================================ */
+
+const { useState, useEffect, useRef, useCallback, useContext, createContext } = React;
+
+/* ────────── Image base ────────── */
+const IMGS = {
+  'home-hero.jpg':       'https://images.unsplash.com/photo-1631982690223-8aa4be0a2497?w=1400&q=80',
+  'charcoal-texture.jpg':'https://images.unsplash.com/photo-1612832164313-ac0d25fe4dac?w=1200&q=80',
+  'piece-01.jpg':        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80',
+  'piece-02.jpg':        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80',
+  'piece-03.jpg':        'https://images.unsplash.com/photo-1603561596112-0a132b757442?w=800&q=80',
+  'piece-04.jpg':        'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80',
+  'piece-05.jpg':        'https://images.unsplash.com/photo-1515562141589-67f0d569b6c6?w=800&q=80',
+  'piece-06.jpg':        'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&q=80',
+  'piece-07.jpg':        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80',
+  'piece-08.jpg':        'https://images.unsplash.com/photo-1609042890394-78cfaaf9ff6a?w=800&q=80',
+  'about-seascape.jpg':  'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&q=80',
+  'about-craftsman.jpg': 'https://images.unsplash.com/photo-1618354691792-d1d42acfd860?w=1000&q=80',
+  'about-pendant-making.jpg':'https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1000&q=80',
+  'about-ring-charcoal.jpg':'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1000&q=80',
+  'brush-wordmark.jpg':  'https://images.unsplash.com/photo-1618354691438-25bc04584c23?w=800&q=80',
+  'craft-hero.jpg':      'https://images.unsplash.com/photo-1559304787-e6b144a8e1bc?w=1400&q=80',
+  'craft-portrait.jpg':  'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=1000&q=80',
+  'contact-hero.jpg':    'https://images.unsplash.com/photo-1591209627710-40edc1596bf0?w=1400&q=80',
+  'product-ring-main.jpg':'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1000&q=80',
+  'charcoal-band.jpg':   'https://images.unsplash.com/photo-1612832164313-ac0d25fe4dac?w=1200&q=80',
+};
+function img(name){ return IMGS[name] || './design_system/assets/img/'+name; }
+
+/* ────────── Data ────────── */
+const DATA = {
+  featured: [
+    { img: img('piece-03.jpg'), name:'Scale Ring', nameJa:'スケールリング', material:'Silver925 / Binchotan', price:'¥49,500' },
+    { img: img('piece-02.jpg'), name:'Scale Pendant', nameJa:'スケールペンダント', material:'Silver925', price:'¥38,500' },
+    { img: img('piece-07.jpg'), name:'Scale Bangle', nameJa:'スケールバングル', material:'Silver925', price:'¥88,500' },
+  ],
+  collections: [
+    { img: img('piece-03.jpg'), label:'RING', ja:'リング' },
+    { img: img('piece-02.jpg'), label:'NECKLACE', ja:'ネックレス' },
+    { img: img('piece-07.jpg'), label:'BANGLE', ja:'バングル' },
+    { img: img('piece-06.jpg'), label:'EARRINGS', ja:'ピアス' },
+  ],
+  products: [
+    { img: img('piece-03.jpg'), name:'Scale Ring', nameJa:'スケールリング', material:'Silver925', price:'¥49,500', cat:'RING' },
+    { img: img('piece-04.jpg'), name:'Organic Ring', nameJa:'オーガニックリング', material:'Silver925', price:'¥27,500', cat:'RING' },
+    { img: img('piece-02.jpg'), name:'Scale Pendant', nameJa:'スケールペンダント', material:'Silver925', price:'¥38,500', cat:'NECKLACE' },
+    { img: img('piece-05.jpg'), name:'Organic Pendant', nameJa:'オーガニックペンダント', material:'Silver925', price:'¥33,000', cat:'NECKLACE' },
+    { img: img('piece-07.jpg'), name:'Scale Bangle', nameJa:'スケールバングル', material:'Silver925', price:'¥88,500', cat:'BANGLE' },
+    { img: img('piece-01.jpg'), name:'Line Bangle', nameJa:'ラインバングル', material:'Silver925', price:'¥72,000', cat:'BANGLE' },
+    { img: img('piece-06.jpg'), name:'Scale Earrings', nameJa:'スケールピアス', material:'Silver925', price:'¥31,900', cat:'EARRINGS' },
+    { img: img('piece-08.jpg'), name:'Texture Ring', nameJa:'テクスチャーリング', material:'Silver925', price:'¥29,700', cat:'RING' },
+  ],
+  archive: [
+    { img: img('piece-01.jpg'), no:'Archive No.063', title:'Scale Ring - Black', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: img('piece-02.jpg'), no:'Archive No.062', title:'Scale Pendant', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: img('piece-07.jpg'), no:'Archive No.061', title:'Scale Bangle', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: img('piece-04.jpg'), no:'Archive No.060', title:'Organic Ring', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: img('piece-05.jpg'), no:'Archive No.059', title:'Organic Pendant', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: img('piece-08.jpg'), no:'Archive No.058', title:'Layer Ring', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: img('piece-03.jpg'), no:'Archive No.057', title:'Texture Ring', year:'2023', material:'SILVER 950 / BINCHOTAN' },
+    { img: img('piece-06.jpg'), no:'Archive No.056', title:'Line Bangle', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+  ],
+  process: [
+    { n:'01', t:'備長炭の選定', d:'長年の経験から、形状・割れ・質感などを見極め、作品にふさわしい備長炭を選び抜きます。' },
+    { n:'02', t:'加工', d:'選定した備長炭を、丁寧にカット・成形。銀に反映させる造形の原型をつくります。' },
+    { n:'03', t:'鋳造', d:'原型をもとに、銀を高温で溶かし、鋳型に流し込みます。火と金属の緊張感が宿る工程です。' },
+    { n:'04', t:'仕上げ', d:'鋳造後の表面を整え、ディテールをひとつひとつ丁寧に彫り出していきます。' },
+    { n:'05', t:'研磨', d:'表面を磨き上げ、素材の持つ光沢と、備長炭の造形美を最大限に引き出します。' },
+    { n:'06', t:'完成', d:'最後に、全体のバランスを確認し、作品としての調和を整えます。唯一無二の作品が完成。' },
+  ],
+  materials: [
+    { code:'BINCHOTAN', name:'備長炭', en:'Binchotan', oneOfOne:true, desc:'数百年の時を経て自然がつくり上げた造形物。AstLogicの備長炭アクセサリーのみ、すべて一点物として扱います。', img: img('charcoal-texture.jpg') },
+    { code:'SILVER 925', name:'シルバー 925', en:'Sterling Silver', oneOfOne:false, desc:'銀92.5%の標準的なスターリングシルバー。経年で深まる味わいと、確かな強度を兼ね備えます。', img: img('product-ring-main.jpg') },
+    { code:'GOLD', name:'ゴールド', en:'K18 Gold', oneOfOne:false, desc:'気品ある輝きと耐久性を持つK18。特別な一点に、永く寄り添う素材です。', img: img('piece-04.jpg') },
+    { code:'PLATINUM', name:'プラチナ', en:'Platinum', oneOfOne:false, desc:'希少で変質しにくい白金。静かで深い輝きが、造形の陰影を引き立てます。', img: img('piece-08.jpg') },
+  ],
+  journal: [
+    { img: img('piece-03.jpg'), cat:'PRODUCT', date:'2026.07.12', title:'新作「Scale Ring」公開' },
+    { img: img('craft-portrait.jpg'), cat:'CRAFTSMANSHIP', date:'2026.06.28', title:'職人の手仕事について' },
+    { img: img('contact-hero.jpg'), cat:'EVENT', date:'2026.06.05', title:'POPUP STORE TOKYO 開催' },
+    { img: img('piece-05.jpg'), cat:'STORY', date:'2026.05.20', title:'なぜ、備長炭なのか' },
+  ],
+  news: [
+    { date:'2026.07.12', title:'POPUP STORE TOKYO' },
+    { date:'2026.06.28', title:'新作リングを公開' },
+    { date:'2026.06.05', title:'ブランドサイトをオープンしました' },
+  ],
+};
+const FOOTER_COLS = [
+  { head:'ABOUT', links:['ブランドについて','素材について','クラフトマンシップ','よくあるご質問'] },
+  { head:'COLLECTION', links:['リング','ネックレス','バングル','ピアス'] },
+  { head:'ARCHIVE', links:['すべての作品','リング','ネックレス','バングル'] },
+  { head:'CRAFTSMANSHIP', links:['制作について','職人の想い','備長炭について'] },
+  { head:'JOURNAL', links:['ニュース','イベント情報','制作記録','読み物'] },
+  { head:'CONTACT', links:['お問い合わせ','プライバシーポリシー','特定商取引法'] },
+];
+
+/* ────────── Viewport hook ────────── */
+const VPCtx = createContext({ w:1200, mob:false, tab:false });
+function useVP(){ return useContext(VPCtx); }
+function VPProvider({children}){
+  const [w,setW]=useState(typeof window!=='undefined'?window.innerWidth:1200);
+  useEffect(()=>{ const fn=()=>setW(window.innerWidth); window.addEventListener('resize',fn); return ()=>window.removeEventListener('resize',fn); },[]);
+  return React.createElement(VPCtx.Provider,{value:{w,mob:w<768,tab:w>=768&&w<1024}},children);
+}
+
+/* ────────── Reveal (scroll fade-up) ────────── */
+function Reveal({children,delay=0,style={}}){
+  const [on,setOn]=useState(false); const ref=useRef(null);
+  useEffect(()=>{
+    if(!ref.current)return;
+    const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){setOn(true);io.disconnect();}},{threshold:0.06,rootMargin:'0px 0px -32px 0px'});
+    io.observe(ref.current); return ()=>io.disconnect();
+  },[]);
+  return <div ref={ref} style={{opacity:on?1:0,transform:on?'none':'translateY(20px)',transition:`opacity 900ms var(--ease-out) ${delay}ms, transform 900ms var(--ease-out) ${delay}ms`,willChange:'opacity, transform',...style}}>{children}</div>;
+}
+
+/* ────────── Shared UI ────────── */
+function SectionLabel({children,sub,rule,align='left',size='md',tone='dark'}){
+  const c = tone==='light'?'var(--text-on-dark)':'var(--ink-700)';
+  const rc = tone==='light'?'var(--line-on-dark)':'var(--ink-100)';
+  return (
+    <div style={{textAlign:align}}>
+      <div style={{display:'flex',alignItems:'center',gap:24,justifyContent:align==='center'?'center':'flex-start'}}>
+        <span style={{fontFamily:'"EB Garamond","Shippori Mincho",serif',fontSize:size==='sm'?'0.6875rem':'0.8125rem',letterSpacing:'0.28em',textTransform:'uppercase',color:c,whiteSpace:'nowrap'}}>{children}</span>
+        {rule && <span style={{flex:1,height:1,background:rc}} />}
+      </div>
+      {sub && <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.875rem',letterSpacing:'0.08em',color:tone==='light'?'var(--text-on-dark-s)':'var(--ink-500)',marginTop:10}}>{sub}</div>}
+    </div>
+  );
+}
+
+function SectionHead({label,sub,viewAll,onViewAll,tone='dark',center}){
+  if(center) return <div style={{textAlign:'center',marginBottom:'clamp(28px,3.5vw,48px)'}}><SectionLabel align="center" sub={sub} tone={tone}>{label}</SectionLabel></div>;
+  return (
+    <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:'clamp(28px,3.5vw,48px)',gap:24}}>
+      <SectionLabel sub={sub} tone={tone}>{label}</SectionLabel>
+      {viewAll && <a href="#" onClick={e=>{e.preventDefault();onViewAll&&onViewAll();}} style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.34em',textTransform:'uppercase',color:tone==='light'?'var(--text-on-dark)':'var(--ink-700)',display:'inline-flex',alignItems:'center',gap:10,whiteSpace:'nowrap',flexShrink:0}}>VIEW ALL <span>→</span></a>}
+    </div>
+  );
+}
+
+function Section({children,bg='var(--paper-050)',py='var(--section-y)',style={}}){
+  const {mob}=useVP();
+  return <section style={{background:bg,padding:(mob?'clamp(40px,8vw,64px)':py)+' 0',...style}}><div style={{maxWidth:'1440px',margin:'0 auto',padding:`0 ${mob?'20px':'var(--gutter)'}`}}>{children}</div></section>;
+}
+
+function Btn({children,variant='primary',size='md',full,arrow,onClick,style={}}){
+  const [h,setH]=useState(false);
+  const pad={sm:'12px 22px',md:'17px 30px',lg:'22px 40px'}[size];
+  const base={fontFamily:'"EB Garamond",serif',fontSize:'0.8125rem',letterSpacing:'0.28em',textTransform:'uppercase',display:full?'flex':'inline-flex',width:full?'100%':'auto',alignItems:'center',justifyContent:'center',gap:14,padding:variant==='text'?0:pad,border:'1px solid transparent',borderRadius:'2px',lineHeight:1,whiteSpace:'nowrap',transition:'all var(--dur-base) var(--ease-out)'};
+  const v={primary:{background:'var(--ink-900)',color:'var(--paper-000)',borderColor:'var(--ink-900)'},secondary:{background:'transparent',color:'var(--ink-700)',borderColor:'var(--ink-200)'},text:{background:'transparent',color:'var(--ink-700)',borderColor:'transparent'}}[variant];
+  const ho=h?(variant==='primary'?{opacity:0.82}:variant==='secondary'?{borderColor:'var(--ink-700)'}:{opacity:0.55}):{};
+  return <button onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{...base,...v,...ho,...style}}><span>{children}</span>{arrow&&<span style={{letterSpacing:0}}>→</span>}</button>;
+}
+
+function Input({label,placeholder,multiline,rows=4}){
+  const s={fontFamily:'"Shippori Mincho",serif',fontSize:'0.875rem',letterSpacing:'0.04em',color:'var(--ink-700)',background:'var(--paper-150)',border:'1px solid var(--ink-100)',borderRadius:'2px',padding:'14px 16px',width:'100%',outline:'none',resize:multiline?'vertical':'none'};
+  return <div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.75rem',letterSpacing:'0.08em',color:'var(--ink-400)',marginBottom:8}}>{label}</div>{multiline?<textarea placeholder={placeholder} rows={rows} style={s}/>:<input placeholder={placeholder} style={s}/>}</div>;
+}
+
+function Tag({children,variant='outline'}){
+  const s={fontFamily:'"EB Garamond",serif',fontSize:'0.5625rem',letterSpacing:'0.2em',textTransform:'uppercase',lineHeight:1,padding:'5px 10px',display:'inline-block'};
+  if(variant==='outline') return <span style={{...s,border:'1px solid var(--ink-200)',color:'var(--ink-500)'}}>{children}</span>;
+  return <span style={{...s,background:'var(--ink-900)',color:'var(--paper-000)'}}>{children}</span>;
+}
+
+/* ────────── Cards ────────── */
+function ProductCard({image,name,nameJa,material,price,ratio='4/3',onClick}){
+  const [h,setH]=useState(false);
+  return (
+    <a href="#" onClick={e=>{e.preventDefault();onClick&&onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'block',color:'inherit'}}>
+      <div style={{position:'relative',width:'100%',aspectRatio:ratio,overflow:'hidden',background:'var(--ink-900)'}}>
+        <img src={image} alt={name} style={{width:'100%',height:'100%',objectFit:'cover',transform:h?'scale(1.045)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
+      </div>
+      <div style={{paddingTop:18}}>
+        <div style={{fontFamily:'"Cormorant Garamond",serif',fontSize:'1.15rem',letterSpacing:'0.03em',color:'var(--ink-700)',lineHeight:1.2}}>{name}</div>
+        {nameJa&&<div style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.75rem',letterSpacing:'0.08em',color:'var(--ink-400)',marginTop:6}}>{nameJa}</div>}
+        {material&&<div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--ink-400)',marginTop:12}}>{material}</div>}
+        {price&&<div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.875rem',letterSpacing:'0.04em',color:'var(--ink-500)',marginTop:8}}>{price}</div>}
+      </div>
+    </a>
+  );
+}
+
+function ArchiveCard({image,archiveNo,title,year,material,soldOut,onClick}){
+  const [h,setH]=useState(false);
+  return (
+    <a href="#" onClick={e=>{e.preventDefault();onClick&&onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'block',color:'inherit'}}>
+      <div style={{width:'100%',aspectRatio:'1/1',overflow:'hidden',background:'var(--ink-900)'}}>
+        <img src={image} alt={title} style={{width:'100%',height:'100%',objectFit:'cover',transform:h?'scale(1.04)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
+      </div>
+      <div style={{paddingTop:16}}>
+        <div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--ink-400)'}}>{archiveNo}</div>
+        <div style={{fontFamily:'"Cormorant Garamond",serif',fontSize:'1.05rem',letterSpacing:'0.03em',color:'var(--ink-700)',marginTop:6,lineHeight:1.25}}>{title}</div>
+        {year&&<div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.875rem',color:'var(--ink-500)',marginTop:8}}>{year}</div>}
+        {material&&<div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--ink-400)',marginTop:6}}>{material}</div>}
+        {soldOut&&<div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--sold-out)',marginTop:12}}>SOLD OUT</div>}
+      </div>
+    </a>
+  );
+}
+
+/* ────────── Navigation ────────── */
+const NAV = ['ABOUT','COLLECTION','ARCHIVE','CRAFTSMANSHIP','JOURNAL','CONTACT'];
+function BagIcon({c}){ return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6.5A3 3 0 0115 6.5V8"/></svg>; }
+function MenuIcon({c}){ return <svg width="26" height="14" viewBox="0 0 26 14" fill="none" stroke={c} strokeWidth="1"><line x1="0" y1="2" x2="26" y2="2"/><line x1="0" y1="12" x2="26" y2="12"/></svg>; }
+function CloseIcon({c}){ return <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke={c} strokeWidth="1"><line x1="2" y1="2" x2="20" y2="20"/><line x1="20" y1="2" x2="2" y2="20"/></svg>; }
+
+function SiteHeader({active,cartCount=0,variant='solid',tone='dark',onNav}){
+  const {mob,tab}=useVP();
+  const [open,setOpen]=useState(false);
+  const showMob=mob||tab;
+  const transparent=variant==='transparent';
+  const ink=tone==='light'?'var(--text-on-dark)':'var(--ink-700)';
+  const line=tone==='light'?'var(--line-on-dark)':'var(--ink-100)';
+  const go=t=>{setOpen(false);onNav&&onNav(t);};
+  return <>
+    <header style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:24,padding:`0 ${mob?'20px':'var(--gutter)'}`,height:mob?'64px':'var(--header-h)',background:transparent?'transparent':'var(--paper-000)',borderBottom:transparent?'none':`1px solid ${line}`,color:ink,position:'relative',zIndex:100}}>
+      <a href="#" onClick={e=>{e.preventDefault();go('HOME');}} style={{color:ink,lineHeight:1,flexShrink:0}}>
+        <div style={{fontFamily:'"Cinzel","Cormorant Garamond",serif',letterSpacing:'0.32em',textTransform:'uppercase',fontSize:mob?'1.1rem':'1.35rem'}}>ASTLOGIC</div>
+        {!mob&&<div style={{fontFamily:'"EB Garamond",serif',letterSpacing:'0.4em',fontSize:'0.6rem',textAlign:'center',marginTop:4,opacity:0.8}}>JAPAN</div>}
+      </a>
+      {!showMob&&<nav style={{display:'flex',gap:'clamp(16px,2vw,40px)'}}>
+        {NAV.map(item=><a key={item} href="#" onClick={e=>{e.preventDefault();go(item);}} style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.18em',textTransform:'uppercase',color:ink,paddingBottom:4,borderBottom:`1px solid ${active===item?ink:'transparent'}`,opacity:active===item?1:0.82,transition:'opacity 240ms var(--ease-out)',whiteSpace:'nowrap'}}>{item}</a>)}
+      </nav>}
+      <div style={{display:'flex',alignItems:'center',gap:20,flexShrink:0}}>
+        <a href="#" onClick={e=>e.preventDefault()} style={{display:'inline-flex',alignItems:'center',gap:8,color:ink}}><BagIcon c={ink}/><span style={{fontFamily:'"EB Garamond",serif',fontSize:'0.875rem'}}>{cartCount}</span></a>
+        <button aria-label="Menu" onClick={()=>setOpen(o=>!o)} style={{background:'none',border:'none',padding:0,display:'inline-flex',color:ink}}>{open?<CloseIcon c={ink}/>:<MenuIcon c={ink}/>}</button>
+      </div>
+    </header>
+    <div style={{position:'fixed',inset:0,zIndex:200,background:'var(--ink-900)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',opacity:open?1:0,pointerEvents:open?'all':'none',transition:'opacity 480ms var(--ease-out)'}}>
+      <button aria-label="Close" onClick={()=>setOpen(false)} style={{position:'absolute',top:mob?18:26,right:mob?20:'var(--gutter)',background:'none',border:'none',color:'var(--text-on-dark)'}}><CloseIcon c="var(--text-on-dark)"/></button>
+      <div style={{fontFamily:'"Cinzel",serif',letterSpacing:'0.32em',textTransform:'uppercase',fontSize:'1.2rem',color:'var(--text-on-dark)',marginBottom:48,opacity:0.6}}>ASTLOGIC</div>
+      <nav style={{display:'flex',flexDirection:'column',alignItems:'center',gap:32}}>
+        {NAV.map(item=><a key={item} href="#" onClick={e=>{e.preventDefault();go(item);}} style={{fontFamily:'"Cormorant Garamond",serif',fontSize:'clamp(26px,5vw,40px)',letterSpacing:'0.14em',textTransform:'uppercase',color:active===item?'var(--text-on-dark)':'var(--text-on-dark-s)',borderBottom:active===item?'1px solid var(--text-on-dark)':'none',paddingBottom:4}}>{item}</a>)}
+      </nav>
+      <div style={{position:'absolute',bottom:40,display:'flex',gap:24,fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.24em',textTransform:'uppercase',color:'var(--text-on-dark-m)'}}>
+        <span>Instagram</span><span>LINE</span><span>Contact</span>
+      </div>
+    </div>
+  </>;
+}
+
+function IgIcon(){ return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/></svg>; }
+function MailIcon(){ return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg>; }
+
+function SiteFooter({tone='light',onNav}){
+  const {mob}=useVP();
+  const dark=tone==='dark';
+  const bg=dark?'var(--ink-900)':'var(--paper-050)';
+  const head=dark?'var(--text-on-dark)':'var(--ink-700)';
+  const link=dark?'var(--text-on-dark-s)':'var(--ink-500)';
+  const border=dark?'var(--line-on-dark)':'var(--ink-100)';
+  const g=mob?'20px':'var(--gutter)';
+  return (
+    <footer style={{background:bg,color:head,borderTop:`1px solid ${border}`}}>
+      <div style={{maxWidth:'1440px',margin:'0 auto',padding:`clamp(48px,6vw,80px) ${g}`}}>
+        {mob?(
+          <div>
+            <div style={{marginBottom:32}}>
+              <div style={{fontFamily:'"Cinzel",serif',letterSpacing:'0.32em',textTransform:'uppercase',fontSize:'1.3rem'}}>ASTLOGIC</div>
+              <div style={{fontFamily:'"EB Garamond",serif',letterSpacing:'0.4em',fontSize:'0.6rem',marginTop:4,opacity:0.7}}>JAPAN</div>
+              <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.875rem',color:link,lineHeight:1.9,marginTop:20}}>自然が創り出す、唯一無二の造形美。</p>
+              <div style={{display:'flex',gap:18,marginTop:24,color:head}}><a href="#" style={{color:'inherit'}}><IgIcon/></a><span style={{fontFamily:'"EB Garamond",serif',fontSize:'0.62rem',letterSpacing:'0.1em',border:'1px solid currentColor',borderRadius:3,padding:'3px 6px',lineHeight:1}}>LINE</span><a href="#" style={{color:'inherit'}}><MailIcon/></a></div>
+            </div>
+            <div style={{borderTop:`1px solid ${border}`,paddingTop:28,display:'grid',gridTemplateColumns:'1fr 1fr',gap:'24px 20px'}}>
+              {FOOTER_COLS.slice(0,4).map(col=><div key={col.head}><div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.22em',textTransform:'uppercase',color:head,marginBottom:14}}>{col.head}</div><ul style={{display:'flex',flexDirection:'column',gap:10}}>{col.links.slice(0,3).map(l=><li key={l}><a href="#" style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,color:link}}>{l}</a></li>)}</ul></div>)}
+            </div>
+          </div>
+        ):(
+          <div style={{display:'grid',gridTemplateColumns:'minmax(220px,1.2fr) repeat(3,1fr)',gap:'clamp(32px,4vw,64px)'}}>
+            <div>
+              <div style={{fontFamily:'"Cinzel",serif',letterSpacing:'0.32em',textTransform:'uppercase',fontSize:'1.3rem'}}>ASTLOGIC</div>
+              <div style={{fontFamily:'"EB Garamond",serif',letterSpacing:'0.4em',fontSize:'0.6rem',marginTop:4,opacity:0.75}}>JAPAN</div>
+              <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.875rem',color:link,lineHeight:1.9,marginTop:24}}>自然が創り出す、<br/>唯一無二の造形美。</p>
+              <div style={{display:'flex',gap:18,marginTop:28,color:head}}><a href="#" style={{color:'inherit'}}><IgIcon/></a><span style={{fontFamily:'"EB Garamond",serif',fontSize:'0.62rem',letterSpacing:'0.1em',border:'1px solid currentColor',borderRadius:3,padding:'3px 6px',lineHeight:1}}>LINE</span><a href="#" style={{color:'inherit'}}><MailIcon/></a></div>
+            </div>
+            <div style={{gridColumn:'2/-1',display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'clamp(24px,3vw,40px)'}}>
+              {FOOTER_COLS.map(col=><div key={col.head}><div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.28em',textTransform:'uppercase',color:head,marginBottom:18}}>{col.head}</div><ul style={{display:'flex',flexDirection:'column',gap:12}}>{col.links.map(l=><li key={l}><a href="#" onClick={e=>{e.preventDefault();onNav&&onNav(col.head);}} style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.875rem',color:link}}>{l}</a></li>)}</ul></div>)}
+            </div>
+          </div>
+        )}
+      </div>
+      <div style={{borderTop:`1px solid ${border}`,padding:`20px ${g}`,textAlign:'center'}}>
+        <span style={{fontFamily:'"EB Garamond",serif',fontSize:'0.75rem',letterSpacing:'0.1em',color:link}}>© ASTLOGIC JAPAN All Rights Reserved.</span>
+      </div>
+    </footer>
+  );
+}
+
+/* ────────── Page hero ────────── */
+function PageHero({title,titleJa,lead,image,height=380}){
+  const {mob}=useVP();
+  return (
+    <header style={{position:'relative',minHeight:mob?260:height,display:'flex',alignItems:'center',background:'#0a0a0a',overflow:'hidden'}}>
+      {image&&<img src={image} alt="" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.62}}/>}
+      <span style={{position:'absolute',inset:0,background:'var(--scrim-full)'}}/>
+      <div style={{position:'relative',maxWidth:'1440px',margin:'0 auto',width:'100%',padding:mob?'48px 24px':`64px var(--gutter)`}}>
+        <h1 style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontSize:mob?'2rem':'clamp(2.25rem,4vw,3.25rem)',letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--text-on-dark)',margin:0}}>{title}</h1>
+        {titleJa&&<div style={{fontFamily:'"Shippori Mincho",serif',fontSize:'0.875rem',letterSpacing:'0.18em',color:'var(--text-on-dark-s)',marginTop:12}}>{titleJa}</div>}
+        {lead&&!mob&&<p style={{fontFamily:'"Shippori Mincho",serif',fontSize:'1rem',lineHeight:2,letterSpacing:'0.08em',color:'var(--text-on-dark-s)',marginTop:24,maxWidth:600}}>{lead}</p>}
+      </div>
+    </header>
+  );
+}
+
+/* ================================================================
+   SCREENS
+   ================================================================ */
+
+/* ────────── HOME ────────── */
+function HomeScreen({go,openProduct}){
+  const {mob,tab}=useVP();
+  const g=mob?'20px':'var(--gutter)';
+  return <div>
+    {/* HERO */}
+    <section style={{position:'relative',minHeight:mob?'100svh':'92vh',background:'var(--paper-050)',overflow:'hidden',display:'flex',alignItems:'center'}}>
+      <img src={img('home-hero.jpg')} alt="" style={{position:'absolute',top:0,right:0,height:'100%',width:mob?'100%':'64%',objectFit:'cover'}}/>
+      <span style={{position:'absolute',inset:0,background:mob?'linear-gradient(180deg,rgba(250,249,247,0.18) 0%,rgba(250,249,247,0.72) 55%,var(--paper-050) 100%)':'linear-gradient(90deg,var(--paper-050) 0%,rgba(250,249,247,0.5) 22%,rgba(250,249,247,0) 48%)'}}/>
+      <div style={{position:'relative',maxWidth:'1440px',margin:'0 auto',width:'100%',padding:`0 ${g}`,marginTop:mob?60:0}}>
+        <Reveal>
+          <h1 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'2rem':'clamp(34px,5vw,60px)',lineHeight:1.5,letterSpacing:'0.12em',color:'var(--ink-700)',margin:0}}>自然が創り出す、<br/>唯一無二の造形美。</h1>
+          <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:mob?14:'1rem',lineHeight:2,letterSpacing:'0.08em',color:'var(--ink-500)',marginTop:24,maxWidth:440}}>備長炭と貴金属が出会い、時を超える美しさを生み出す。<br/>AstLogicは、日本から生まれたラグジュアリーアクセサリーブランドです。</p>
+        </Reveal>
+      </div>
+      {!mob&&<div style={{position:'absolute',left:g,bottom:48,display:'flex',alignItems:'center',gap:14,writingMode:'vertical-rl',fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.3em',textTransform:'uppercase',color:'var(--ink-400)'}}>SCROLL<span style={{writingMode:'horizontal-tb',width:1,height:48,background:'var(--ink-300)'}}/></div>}
+    </section>
+
+    {/* NEWS */}
+    <section style={{background:'var(--ink-900)',color:'var(--text-on-dark)'}}>
+      <div style={{maxWidth:'1440px',margin:'0 auto',padding:`clamp(40px,6vw,72px) ${g}`}}>
+        {mob?<div>
+          <SectionHead label="NEWS" tone="light" viewAll onViewAll={()=>go('JOURNAL')}/>
+          <div style={{display:'flex',flexDirection:'column',gap:24}}>
+            {DATA.news.map((n,i)=><Reveal key={i} delay={i*60}><a href="#" onClick={e=>{e.preventDefault();go('JOURNAL');}} style={{color:'inherit',borderTop:'1px solid var(--line-on-dark)',paddingTop:16,display:'block'}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.1em',color:'var(--text-on-dark-m)'}}>{n.date}</div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:14,lineHeight:1.7,marginTop:10}}>{n.title}</div></a></Reveal>)}
+          </div>
+        </div>:<div style={{display:'grid',gridTemplateColumns:tab?'1fr':'1.4fr 1fr',gap:'clamp(32px,5vw,88px)'}}>
+          <div>
+            <SectionHead label="NEWS" tone="light" viewAll onViewAll={()=>go('JOURNAL')}/>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:28}}>
+              {DATA.news.map((n,i)=><a key={i} href="#" onClick={e=>{e.preventDefault();go('JOURNAL');}} style={{color:'inherit',borderTop:'1px solid var(--line-on-dark)',paddingTop:16}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.1em',color:'var(--text-on-dark-m)'}}>{n.date}</div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,lineHeight:1.7,marginTop:10}}>{n.title}</div></a>)}
+            </div>
+          </div>
+          {!tab&&<div style={{borderLeft:'1px solid var(--line-on-dark)',paddingLeft:'clamp(24px,3vw,52px)'}}>
+            <SectionLabel tone="light">UPCOMING EVENT</SectionLabel>
+            <div style={{fontFamily:'"Cormorant Garamond",serif',fontSize:24,letterSpacing:'0.04em',color:'var(--text-on-dark)',marginTop:20,lineHeight:1.3}}>POPUP STORE<br/>TOKYO</div>
+            <div style={{fontFamily:'"EB Garamond",serif',fontSize:13,color:'var(--text-on-dark-s)',marginTop:16}}>2026.07.12 — 07.20</div>
+            <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,color:'var(--text-on-dark-s)',marginTop:6}}>at ISETAN SHINJUKU</div>
+            <div style={{marginTop:28}}><Btn variant="text" arrow onClick={()=>go('JOURNAL')} style={{color:'var(--text-on-dark)'}}>VIEW MORE</Btn></div>
+          </div>}
+        </div>}
+      </div>
+    </section>
+
+    {/* FEATURED PIECES */}
+    <Section>
+      <SectionHead label="FEATURED PIECES" viewAll onViewAll={()=>go('COLLECTION')}/>
+      <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':'repeat(3,1fr)',gap:mob?'20px 16px':'clamp(20px,2.4vw,40px)'}}>
+        {DATA.featured.map((p,i)=><Reveal key={i} delay={i*80}><ProductCard {...p} image={p.img} onClick={()=>openProduct(0)}/></Reveal>)}
+      </div>
+    </Section>
+
+    {/* COLLECTIONS */}
+    <Section bg="var(--paper-100)">
+      <SectionHead label="COLLECTIONS" center/>
+      <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':'repeat(4,1fr)',gap:mob?'16px 12px':'clamp(12px,1.6vw,24px)'}}>
+        {DATA.collections.map((c,i)=><Reveal key={i} delay={i*60}><div style={{textAlign:'center'}}><a href="#" onClick={e=>{e.preventDefault();go('COLLECTION');}}><div style={{aspectRatio:'4/3',overflow:'hidden',background:'#0a0a0a'}}><img src={c.img} alt={c.label} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div></a><div style={{fontFamily:'"EB Garamond",serif',fontSize:mob?11:13,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-700)',marginTop:16}}>{c.label}</div><div style={{width:20,height:1,background:'var(--ink-300)',margin:'10px auto 0'}}/></div></Reveal>)}
+      </div>
+    </Section>
+
+    {/* ARCHIVE */}
+    <Section>
+      <SectionHead label="ARCHIVE — ONE OF ONE" viewAll onViewAll={()=>go('ARCHIVE')}/>
+      <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':'repeat(3,1fr)',gap:mob?'20px 16px':'clamp(20px,2.4vw,40px)'}}>
+        {DATA.archive.slice(0,mob?2:3).map((a,i)=><Reveal key={i} delay={i*80}><ArchiveCard image={a.img} archiveNo={a.no} title={a.title} material="Silver925 / Binchotan" onClick={()=>go('ARCHIVE_DETAIL')}/></Reveal>)}
+      </div>
+    </Section>
+
+    {/* STORY / CRAFT / JOURNAL */}
+    <section style={{display:'grid',gridTemplateColumns:mob?'1fr':'repeat(3,1fr)'}}>
+      {[{img:img('about-seascape.jpg'),label:'STORY',body:'なぜ、備長炭なのか。日本が誇る伝統と、自然が生んだ造形美。',to:'ABOUT'},{img:img('craft-portrait.jpg'),label:'CRAFTSMANSHIP',body:'すべては、職人の手仕事から生まれる。細部までこだわり抜いた造形と仕上げ。',to:'CRAFTSMANSHIP'},{img:img('about-pendant-making.jpg'),label:'JOURNAL',body:'ブランドの背景にある物語、制作の記録、イベント情報。',to:'JOURNAL'}].map((b,i)=>
+        <a key={i} href="#" onClick={e=>{e.preventDefault();go(b.to);}} style={{position:'relative',minHeight:mob?260:360,display:'flex',alignItems:'flex-end',overflow:'hidden',background:'#0a0a0a',color:'var(--text-on-dark)'}}>
+          <img src={b.img} alt="" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.55}}/>
+          <span style={{position:'absolute',inset:0,background:'var(--scrim-full)'}}/>
+          <div style={{position:'relative',padding:mob?'28px 24px':'40px 36px'}}>
+            <div style={{fontFamily:'"Cormorant Garamond",serif',fontSize:mob?20:22,letterSpacing:'0.14em',textTransform:'uppercase'}}>{b.label}</div>
+            <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:12.5,lineHeight:1.9,color:'var(--text-on-dark-s)',marginTop:12}}>{b.body}</p>
+            <div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.24em',textTransform:'uppercase',marginTop:18,display:'inline-flex',gap:10}}>VIEW MORE <span>→</span></div>
+          </div>
+        </a>
+      )}
+    </section>
+
+    {/* INSTAGRAM */}
+    <Section py="clamp(40px,5vw,72px)">
+      <div style={{display:'flex',alignItems:'baseline',gap:16,marginBottom:'24px'}}>
+        <SectionLabel>INSTAGRAM</SectionLabel>
+        <span style={{fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.08em',color:'var(--ink-400)'}}>@astlogic_japan</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:mob?'repeat(4,1fr)':'repeat(7,1fr)',gap:mob?6:10}}>
+        {[...DATA.archive,DATA.featured[0]].slice(0,mob?4:7).map((p,i)=><div key={i} style={{aspectRatio:'1/1',overflow:'hidden',background:'#0a0a0a'}}><img src={p.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>)}
+      </div>
+    </Section>
+  </div>;
+}
+
+/* ────────── COLLECTION ────────── */
+function CollectionScreen({go,openProduct}){
+  const {mob,tab}=useVP();
+  const cats=['ALL','RING','NECKLACE','BANGLE','EARRINGS'];
+  const [cat,setCat]=useState('ALL');
+  const list=cat==='ALL'?DATA.products:DATA.products.filter(p=>p.cat===cat);
+  return <div>
+    <section style={{position:'relative',minHeight:mob?300:440,background:'var(--paper-050)',overflow:'hidden',display:'flex',alignItems:'center'}}>
+      <img src={img('charcoal-texture.jpg')} alt="" style={{position:'absolute',top:0,right:0,height:'100%',width:mob?'100%':'52%',objectFit:'cover',opacity:mob?0.28:1}}/>
+      {!mob&&<span style={{position:'absolute',top:0,right:0,height:'100%',width:'60%',background:'linear-gradient(90deg,var(--paper-050) 8%,rgba(250,249,247,0) 55%)'}}/>}
+      <div style={{position:'relative',maxWidth:'1440px',margin:'0 auto',width:'100%',padding:`0 ${mob?'20px':'var(--gutter)'}`}}>
+        <h1 style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:300,letterSpacing:'0.12em',textTransform:'uppercase',fontSize:mob?'2rem':'clamp(2.25rem,4vw,3.25rem)'}}>COLLECTION</h1>
+        <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,letterSpacing:'0.18em',color:'var(--ink-500)',marginTop:12}}>コレクション</div>
+        {!mob&&<p style={{fontFamily:'"Shippori Mincho",serif',fontSize:17,lineHeight:2,letterSpacing:'0.08em',marginTop:24}}>自然が生み出す造形美を、<br/>唯一無二のジュエリーとして。</p>}
+      </div>
+    </section>
+    <div style={{borderBottom:'1px solid var(--ink-100)',background:'var(--paper-050)',overflowX:'auto'}}>
+      <div style={{maxWidth:'1440px',margin:'0 auto',padding:`18px ${mob?'20px':'var(--gutter)'}`,display:'flex',alignItems:'center',gap:'clamp(12px,2vw,32px)',minWidth:'max-content'}}>
+        <span style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-400)',marginRight:4,flexShrink:0}}>CATEGORY</span>
+        {cats.map(c=><button key={c} onClick={()=>setCat(c)} style={{background:'none',border:'none',padding:'4px 0',fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.16em',textTransform:'uppercase',color:cat===c?'var(--ink-700)':'var(--ink-400)',borderBottom:`1px solid ${cat===c?'var(--ink-700)':'transparent'}`,whiteSpace:'nowrap',flexShrink:0}}>{c}</button>)}
+      </div>
+    </div>
+    <Section py="clamp(36px,4vw,72px)">
+      {cat==='ALL'?
+        <div style={{display:'grid',gridTemplateColumns:mob?'1fr':'repeat(2,1fr)',gap:mob?16:'clamp(14px,1.8vw,26px)'}}>
+          {DATA.collections.map((c,i)=><Reveal key={i} delay={i*70}><a href="#" onClick={e=>{e.preventDefault();setCat(c.label);}} style={{position:'relative',display:'block',aspectRatio:'3/2',overflow:'hidden',background:'#0a0a0a'}}><img src={c.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/><span style={{position:'absolute',inset:0,background:'var(--scrim-full)'}}/><div style={{position:'absolute',bottom:0,left:0,right:0,padding:mob?'20px 18px':'28px 32px',color:'var(--text-on-dark)'}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:mob?14:18,letterSpacing:'0.22em',textTransform:'uppercase'}}>{c.label}</div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,letterSpacing:'0.12em',color:'var(--text-on-dark-s)',marginTop:6}}>{c.ja}</div><div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.16em',textTransform:'uppercase',marginTop:12,display:'inline-flex',gap:8}}>VIEW ALL →</div></div></a></Reveal>)}
+        </div>
+      : <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':tab?'repeat(3,1fr)':'repeat(4,1fr)',gap:mob?'24px 16px':'clamp(18px,2vw,36px)'}}>
+          {list.map((p,i)=><Reveal key={p.name} delay={i*50}><ProductCard {...p} image={p.img} onClick={()=>openProduct(DATA.products.indexOf(p))}/></Reveal>)}
+        </div>
+      }
+    </Section>
+  </div>;
+}
+
+/* ────────── PRODUCT ────────── */
+function ProductScreen({go,productIndex=0,addToCart,openProduct}){
+  const {mob}=useVP();
+  const p=DATA.products[productIndex]||DATA.products[0];
+  const thumbs=[p.img,img('about-ring-charcoal.jpg'),img('craft-portrait.jpg'),img('product-ring-main.jpg')];
+  const [mainImg,setMainImg]=useState(p.img);
+  const sizes=['#11','#13','#15','#17','#19'];
+  const [size,setSize]=useState('#13');
+  const [qty,setQty]=useState(1);
+  return <div style={{background:'var(--paper-000)'}}>
+    <div style={{maxWidth:'1440px',margin:'0 auto',padding:`24px ${mob?'20px':'var(--gutter)'} clamp(56px,7vw,100px)`}}>
+      <div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--ink-400)',marginBottom:32}}>
+        <a href="#" onClick={e=>{e.preventDefault();go('COLLECTION');}} style={{color:'inherit'}}>COLLECTION</a> / <span>RING</span> / <span>{p.name}</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:mob?'1fr':'1.2fr 1fr',gap:mob?32:'clamp(36px,5vw,72px)',alignItems:'start'}}>
+        <div>
+          <div style={{aspectRatio:'1/1',background:'#0a0a0a',overflow:'hidden'}}><img src={mainImg} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginTop:10}}>{thumbs.map((t,i)=><div key={i} onClick={()=>setMainImg(t)} style={{aspectRatio:'1/1',background:'#0a0a0a',overflow:'hidden',cursor:'pointer',opacity:mainImg===t?1:0.6,transition:'opacity 240ms'}}><img src={t} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>)}</div>
+        </div>
+        <div>
+          <h1 style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:400,fontSize:mob?'2rem':'clamp(28px,3.2vw,42px)',letterSpacing:'0.03em'}}>{p.name}</h1>
+          <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,letterSpacing:'0.12em',color:'var(--ink-400)',marginTop:8}}>{p.nameJa}</div>
+          <div style={{fontFamily:'"EB Garamond",serif',fontSize:'1.25rem',letterSpacing:'0.04em',color:'var(--ink-500)',marginTop:20}}>{p.price} <span style={{fontSize:12,color:'var(--ink-400)'}}>(tax in)</span></div>
+          <div style={{borderTop:'1px solid var(--ink-100)',marginTop:28,paddingTop:24}}>
+            <div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-400)',marginBottom:12}}>MATERIAL</div>
+            <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:14,color:'var(--ink-700)'}}>{p.material}</div>
+          </div>
+          <div style={{borderTop:'1px solid var(--ink-100)',marginTop:20,paddingTop:20}}>
+            <div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-400)',marginBottom:12}}>SIZE</div>
+            <div style={{display:'flex',gap:10}}>{sizes.map(s=><button key={s} onClick={()=>setSize(s)} style={{background:'none',border:`1px solid ${size===s?'var(--ink-700)':'var(--ink-200)'}`,padding:'8px 14px',fontFamily:'"EB Garamond",serif',fontSize:13,letterSpacing:'0.08em',color:size===s?'var(--ink-700)':'var(--ink-400)'}}>{s}</button>)}</div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:16,marginTop:24}}>
+            <span style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-400)'}}>QUANTITY</span>
+            <div style={{display:'flex',alignItems:'center',border:'1px solid var(--ink-200)'}}>
+              <button onClick={()=>setQty(q=>Math.max(1,q-1))} style={{background:'none',border:'none',padding:'10px 14px',fontFamily:'"EB Garamond",serif',fontSize:16,color:'var(--ink-500)'}}>−</button>
+              <span style={{fontFamily:'"EB Garamond",serif',fontSize:14,minWidth:24,textAlign:'center'}}>{qty}</span>
+              <button onClick={()=>setQty(q=>q+1)} style={{background:'none',border:'none',padding:'10px 14px',fontFamily:'"EB Garamond",serif',fontSize:16,color:'var(--ink-500)'}}>+</button>
+            </div>
+          </div>
+          <div style={{marginTop:32}}><Btn variant="primary" full size="lg" onClick={addToCart}>カートに追加する</Btn></div>
+          <div style={{textAlign:'center',marginTop:16}}><Btn variant="text" style={{fontSize:'0.6875rem'}}>♡ WISH LIST</Btn></div>
+          <div style={{borderTop:'1px solid var(--ink-100)',marginTop:28,paddingTop:24}}>
+            <SectionLabel size="sm">DESCRIPTION</SectionLabel>
+            <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2,color:'var(--ink-500)',marginTop:16}}>備長炭が持つ自然の造形美を、繊細なスケール（鱗）模様として銀の表面に再現したリングです。ひとつひとつ手作業で仕上げた鱗の凹凸が、光を柔らかく受け止め、独特の陰影を生み出します。</p>
+          </div>
+        </div>
+      </div>
+      <div style={{marginTop:'clamp(48px,6vw,96px)'}}>
+        <SectionHead label="YOU MAY ALSO LIKE" viewAll onViewAll={()=>go('COLLECTION')}/>
+        <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':'repeat(4,1fr)',gap:mob?'20px 16px':'clamp(16px,2vw,32px)'}}>
+          {DATA.products.filter((_,i)=>i!==productIndex).slice(0,4).map((q,i)=><Reveal key={i} delay={i*60}><ProductCard {...q} image={q.img} onClick={()=>openProduct(DATA.products.indexOf(q))}/></Reveal>)}
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+
+/* ────────── ARCHIVE ────────── */
+function ArchiveScreen({go,openArchive}){
+  const {mob,tab}=useVP();
+  const all=[...DATA.archive,...DATA.archive.map((a,i)=>({...a,no:'Archive No.0'+(55-i),year:'2022'}))];
+  return <div>
+    <PageHero title="ARCHIVE" titleJa="アーカイブ" image={img('charcoal-texture.jpg')} height={360} lead="備長炭の造形をそのままに、ひとつひとつ異なる表情を持つ一点物の作品たち。SOLD OUTの作品も、その記録としてご覧いただけます。"/>
+    <Section py="clamp(40px,5vw,80px)">
+      <div style={{display:'grid',gridTemplateColumns:mob||tab?'1fr':'180px 1fr',gap:mob?0:'clamp(28px,4vw,56px)',alignItems:'start'}}>
+        {!mob&&!tab&&<aside>
+          {[['CATEGORY',['ALL','RING','NECKLACE','BANGLE','EARRINGS','OTHER']],['MATERIAL',['SILVER 925','SILVER 950','K18 GOLD','PLATINUM','BINCHOTAN']],['YEAR',['2024','2023','2022','2021','2020']]].map(([head,items])=><div key={head} style={{marginBottom:36}}><div style={{display:'flex',alignItems:'center',gap:14,marginBottom:18}}><span style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-700)'}}>{head}</span><span style={{flex:1,height:1,background:'var(--ink-100)'}}/></div><ul style={{display:'flex',flexDirection:'column',gap:11}}>{items.map(it=><li key={it}><span style={{fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.08em',color:'var(--ink-500)'}}>{it}</span></li>)}</ul></div>)}
+          <div style={{border:'1px solid var(--ink-100)',padding:20}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--ink-400)',marginBottom:10}}>ABOUT ARCHIVE</div><p style={{fontFamily:'"Shippori Mincho",serif',fontSize:11.5,lineHeight:1.95,color:'var(--ink-500)',margin:0}}>アーカイブ作品は備長炭の一点物のため、再販・再制作は行っておりません。</p></div>
+        </aside>}
+        <div>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+            <span style={{fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.1em',color:'var(--ink-500)'}}>全 63 件</span>
+            {!mob&&<span style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,color:'var(--ink-500)'}}>並び替え：新しい順 ⌄</span>}
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':tab?'repeat(3,1fr)':'repeat(4,1fr)',gap:mob?'24px 14px':'clamp(16px,1.8vw,28px)'}}>
+            {all.slice(0,8).map((a,i)=><Reveal key={i} delay={i*45}><ArchiveCard image={a.img} archiveNo={a.no} title={a.title} year={a.year} material={a.material} soldOut onClick={()=>openArchive&&openArchive()}/></Reveal>)}
+          </div>
+          <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:18,marginTop:48,fontFamily:'"EB Garamond",serif',fontSize:13,letterSpacing:'0.12em',color:'var(--ink-500)'}}>
+            <span style={{color:'var(--ink-700)',borderBottom:'1px solid var(--ink-700)',paddingBottom:3}}>1</span><span>2</span><span>3</span><span>…</span><span>7</span>
+            <span style={{marginLeft:8,textTransform:'uppercase',letterSpacing:'0.2em',display:'inline-flex',gap:8}}>NEXT →</span>
+          </div>
+        </div>
+      </div>
+    </Section>
+  </div>;
+}
+
+/* ────────── ARCHIVE DETAIL ────────── */
+function ArchiveDetailScreen({go}){
+  const {mob}=useVP();
+  const a=DATA.archive[2];
+  return <div style={{background:'var(--paper-000)'}}>
+    <div style={{maxWidth:'1440px',margin:'0 auto',padding:`24px ${mob?'20px':'var(--gutter)'} clamp(56px,7vw,100px)`}}>
+      <div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--ink-400)',marginBottom:32}}>
+        <a href="#" onClick={e=>{e.preventDefault();go('HOME');}} style={{color:'inherit'}}>HOME</a> / <a href="#" onClick={e=>{e.preventDefault();go('ARCHIVE');}} style={{color:'inherit'}}>ARCHIVE</a> / <span>{a.no}</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:mob?'1fr':'1.2fr 1fr',gap:mob?32:'clamp(36px,5vw,72px)',alignItems:'start'}}>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <div style={{aspectRatio:'1/1',background:'#0a0a0a',overflow:'hidden'}}><img src={a.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>{[img('piece-01.jpg'),img('piece-05.jpg'),img('about-ring-charcoal.jpg')].map((g,i)=><div key={i} style={{aspectRatio:'1/1',background:'#0a0a0a',overflow:'hidden'}}><img src={g} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>)}</div>
+        </div>
+        <div>
+          <div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--ink-400)'}}>{a.no}</div>
+          <h1 style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:400,fontSize:mob?'2rem':'clamp(28px,3.2vw,42px)',letterSpacing:'0.03em',marginTop:10}}>{a.title}</h1>
+          <div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--sold-out)',marginTop:18}}>SOLD OUT — 一点物</div>
+          <div style={{borderTop:'1px solid var(--ink-100)',marginTop:26}}>
+            {[['制作年',a.year],['素材','SILVER 925 / 備長炭'],['備長炭の産地','紀州備長炭'],['サイズ','#15'],['重量','約11.2g'],['仕上げ','燻し仕上げ / 手研磨'],['製作方法','鋳造・研磨・磨上げ']].map(([k,v])=><div key={k} style={{display:'grid',gridTemplateColumns:'110px 1fr',gap:14,padding:'12px 0',borderBottom:'1px solid var(--ink-100)'}}><span style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--ink-400)'}}>{k}</span><span style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,color:'var(--ink-700)'}}>{v}</span></div>)}
+          </div>
+          <div style={{marginTop:28}}>
+            <SectionLabel size="sm">DESCRIPTION</SectionLabel>
+            <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2,color:'var(--ink-500)',marginTop:16}}>紀州備長炭の中から、稀有な木目と割れを持つ一片を選定。その自然が生んだ造形を損なわぬよう、銀へと写し取りました。</p>
+          </div>
+          <div style={{marginTop:28,background:'var(--paper-100)',padding:24}}>
+            <SectionLabel size="sm">CRAFTSMAN'S COMMENT</SectionLabel>
+            <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,lineHeight:2,color:'var(--ink-500)',marginTop:14}}>「この一片に出会ったとき、形を足すのではなく、削ぎ落とすことを考えました。自然がすでに完成させた造形に、ただ静かに寄り添う。」</p>
+            <div style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.1em',color:'var(--ink-400)',marginTop:12}}>— 職人 / 主宰</div>
+          </div>
+          <div style={{marginTop:32}}><Btn variant="secondary" full onClick={()=>go('ARCHIVE')}>ARCHIVE LISTに戻る</Btn></div>
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+
+/* ────────── JOURNAL ────────── */
+function JournalScreen({go}){
+  const {mob,tab}=useVP();
+  const cats=['ALL','NEWS','EVENT','PRODUCT','STORY','CRAFTSMANSHIP'];
+  const [cat,setCat]=useState('ALL');
+  const items=[...DATA.journal,...DATA.journal.map((j,i)=>({...j,date:'2026.04.0'+(8-i)}))];
+  const list=cat==='ALL'?items:items.filter(j=>j.cat===cat);
+  return <div>
+    <PageHero title="JOURNAL" titleJa="ジャーナル" image={img('about-pendant-making.jpg')} height={320} lead="ニュース、イベント、制作の記録。AstLogicの「今」を綴ります。"/>
+    <div style={{borderBottom:'1px solid var(--ink-100)',background:'var(--paper-050)',overflowX:'auto'}}>
+      <div style={{maxWidth:'1440px',margin:'0 auto',padding:`18px ${mob?'20px':'var(--gutter)'}`,display:'flex',gap:'clamp(14px,2vw,32px)',minWidth:'max-content'}}>
+        {cats.map(c=><button key={c} onClick={()=>setCat(c)} style={{background:'none',border:'none',padding:'4px 0',fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.16em',textTransform:'uppercase',color:cat===c?'var(--ink-700)':'var(--ink-400)',borderBottom:`1px solid ${cat===c?'var(--ink-700)':'transparent'}`,whiteSpace:'nowrap',flexShrink:0}}>{c}</button>)}
+      </div>
+    </div>
+    <Section py="clamp(36px,5vw,72px)">
+      <div style={{display:'grid',gridTemplateColumns:mob?'1fr':tab?'repeat(2,1fr)':'repeat(3,1fr)',gap:'clamp(28px,3vw,48px) clamp(16px,2vw,36px)'}}>
+        {list.map((j,i)=><Reveal key={i} delay={mob?0:i*50}><a href="#" onClick={e=>e.preventDefault()} style={{color:'inherit',display:'block'}}><div style={{aspectRatio:'3/2',overflow:'hidden',background:'#0a0a0a'}}><img src={j.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div><div style={{display:'flex',gap:14,alignItems:'center',marginTop:16}}><Tag variant="outline">{j.cat}</Tag><span style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.08em',color:'var(--ink-400)'}}>{j.date}</span></div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:15,lineHeight:1.7,color:'var(--ink-700)',marginTop:12}}>{j.title}</div></a></Reveal>)}
+      </div>
+    </Section>
+  </div>;
+}
+
+/* ────────── CRAFTSMANSHIP ────────── */
+function CraftsmanshipScreen({go}){
+  const {mob,tab}=useVP();
+  const stepImg=[img('charcoal-texture.jpg'),img('about-craftsman.jpg'),img('craft-hero.jpg'),img('about-pendant-making.jpg'),img('piece-08.jpg'),img('product-ring-main.jpg')];
+  return <div>
+    <PageHero title="CRAFTSMANSHIP" titleJa="クラフトマンシップ" image={img('craft-hero.jpg')} height={420} lead="備長炭。その静謐な力を、銀や金属という素材に宿すために。職人の手仕事によって、ひとつひとつ丁寧に形を生み出していきます。"/>
+    <Section>
+      <Reveal><div style={{marginBottom:'clamp(36px,4vw,56px)',maxWidth:520}}><SectionLabel rule>PROCESS</SectionLabel><p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2,color:'var(--ink-500)',marginTop:18}}>素材の選定から、制作、仕上げまで。すべての工程を、職人の手で。</p></div></Reveal>
+      <div style={{display:'grid',gridTemplateColumns:mob?'1fr':tab?'repeat(2,1fr)':'repeat(3,1fr)',gap:mob?40:'clamp(28px,3vw,52px)'}}>
+        {DATA.process.map((s,i)=><Reveal key={s.n} delay={mob?0:i*60}><div>
+          <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}><span style={{fontFamily:'"Cormorant Garamond",serif',fontSize:20,letterSpacing:'0.04em',color:'var(--ink-400)'}}>{s.n}</span><span style={{fontFamily:'"Shippori Mincho",serif',fontSize:15,fontWeight:500,color:'var(--ink-700)'}}>{s.t}</span></div>
+          <div style={{aspectRatio:'3/2',overflow:'hidden',background:'#0a0a0a'}}><img src={stepImg[i]} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+          <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:12.5,lineHeight:1.9,color:'var(--ink-500)',marginTop:14}}>{s.d}</p>
+        </div></Reveal>)}
+      </div>
+    </Section>
+    <section style={{display:'grid',gridTemplateColumns:mob?'1fr':'1fr 1.4fr'}}>
+      <div style={{background:'var(--paper-100)',padding:'clamp(36px,5vw,64px)',display:'flex',flexDirection:'column',justifyContent:'center',order:mob?2:1}}>
+        <h3 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:'clamp(18px,2vw,24px)',lineHeight:1.6,letterSpacing:'0.06em',margin:0}}>職人の手から生まれるもの</h3>
+        <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2,color:'var(--ink-500)',marginTop:20,maxWidth:380}}>機械では生み出せない、わずかな揺らぎや温度感。それこそが、AstLogicの作品が持つ本質です。</p>
+        <div style={{marginTop:24}}><Btn variant="text" arrow onClick={()=>go('ABOUT')}>職人について見る</Btn></div>
+      </div>
+      <div style={{minHeight:mob?260:380,background:'#0a0a0a',order:mob?1:2}}><img src={img('craft-portrait.jpg')} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+    </section>
+  </div>;
+}
+
+/* ────────── ABOUT ────────── */
+function AboutScreen({go}){
+  const {mob}=useVP();
+  const g=mob?'20px':'var(--gutter)';
+  function Band({imgSrc,imgOrder=1,children,bg='var(--paper-050)',minH=400}){
+    return <section style={{display:'grid',gridTemplateColumns:mob?'1fr':'1fr 1fr',alignItems:'stretch'}}>
+      <div style={{background:'#0a0a0a',minHeight:mob?240:minH,order:mob?1:imgOrder}}><img src={imgSrc} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+      <div style={{background:bg,display:'flex',flexDirection:'column',justifyContent:'center',padding:`clamp(36px,5vw,80px) ${g}`,order:mob?2:(imgOrder===1?2:1)}}>{children}</div>
+    </section>;
+  }
+  return <div>
+    <Band imgSrc={img('about-ring-charcoal.jpg')} imgOrder={2} minH={420}>
+      <h1 style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontSize:mob?'2.25rem':'clamp(2.25rem,4vw,3.25rem)',letterSpacing:'0.1em',textTransform:'uppercase',margin:0}}>ABOUT</h1>
+      <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,letterSpacing:'0.18em',color:'var(--ink-400)',marginTop:12}}>アストロジックについて</div>
+      <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:mob?15:16,lineHeight:2.1,letterSpacing:'0.08em',marginTop:32,maxWidth:440}}>自然が生み出す、唯一無二の造形美。<br/>その美しさに、意味を与え、永く残していく。<br/>それが、AstLogicのものづくりです。</p>
+    </Band>
+    <Band imgSrc={img('about-seascape.jpg')} imgOrder={2} bg="var(--paper-100)">
+      <SectionLabel size="sm">PHILOSOPHY</SectionLabel>
+      <h2 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'1.35rem':'clamp(20px,2.4vw,30px)',lineHeight:1.6,letterSpacing:'0.06em',margin:'18px 0 0'}}>自然がつくる造形に、<br/>人の手で意味を与える。</h2>
+      <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2,color:'var(--ink-500)',marginTop:22,maxWidth:440}}>備長炭は、長い年月をかけて自然がつくり上げた造形物です。そのひとつひとつが異なる表情を持ち、同じものは二つと存在しません。AstLogicは、その偶発的な美しさを見つめ、シルバーや貴金属と組み合わせることで、永く残るジュエリーへと昇華させます。</p>
+    </Band>
+    <section style={{background:'#0a0a0a',color:'var(--text-on-dark)'}}>
+      <div style={{display:'grid',gridTemplateColumns:mob?'1fr':'1fr 1fr'}}>
+        <div style={{padding:`clamp(40px,5vw,80px) ${g}`}}>
+          <SectionLabel size="sm" tone="light">BRAND</SectionLabel>
+          <h2 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'1.3rem':'clamp(20px,2.4vw,28px)',letterSpacing:'0.06em',margin:'18px 0 0'}}>AstLogicという名に込めた想い</h2>
+          <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2,color:'var(--text-on-dark-s)',marginTop:22,maxWidth:460}}>「Ast」は、星や宇宙、未知なる可能性を意味します。「Logic」は、理性や構造、職人の技術を表します。自然（Ast）と技術（Logic）の融合によって生まれるジュエリー。それが、AstLogicです。</p>
+        </div>
+        <div style={{minHeight:mob?240:420,display:'flex',alignItems:'center',justifyContent:'center',padding:'clamp(20px,3vw,48px)'}}><img src={img('brush-wordmark.jpg')} alt="Ast Logic" style={{width:'100%',maxWidth:400}}/></div>
+      </div>
+    </section>
+    <Band imgSrc={img('about-pendant-making.jpg')} imgOrder={2}>
+      <SectionLabel size="sm">OUR PROMISE</SectionLabel>
+      <h2 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'1.5rem':'clamp(22px,2.6vw,32px)',letterSpacing:'0.08em',margin:'18px 0 0'}}>一点に、永遠を。</h2>
+      <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:13.5,lineHeight:2.1,color:'var(--ink-500)',marginTop:22,maxWidth:440}}>備長炭アクセサリーは、自然が生んだ造形をそのまま写し取るため、同じものは二つと生まれません。だからこそ、備長炭アクセサリーのみを一点物としてお届けします。</p>
+    </Band>
+  </div>;
+}
+
+/* ────────── CONTACT ────────── */
+function ContactScreen({go}){
+  const {mob,tab}=useVP();
+  const [sent,setSent]=useState(false);
+  const cats=[
+    {t:'一般のお問い合わせ',d:'商品やご注文、修理、その他サービスに関するご質問はこちら。',path:'M3 7h18M3 12h18M3 17h12'},
+    {t:'卸売・取扱希望',d:'商品のお取り扱いや卸売に関するご相談はこちら。',path:'M3 12l4-4 4 3 5-5 4 3'},
+    {t:'コラボレーション',d:'ブランドやアーティストとのコラボレーションに関するご相談はこちら。',path:'M4 16l9-9 3 3-9 9H4v-3z M13 6l2-2 3 3-2 2'},
+    {t:'取材・メディア掲載',d:'取材のご依頼やプレスに関するお問い合わせはこちら。',path:'M4 8h4l2-2h4l2 2h2v10H4V8z M12 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'},
+  ];
+  return <div>
+    <PageHero title="CONTACT" titleJa="コンタクト" image={img('contact-hero.jpg')} height={340} lead="お問い合わせ・ご相談はこちらから。内容に応じて、担当者よりご連絡させていただきます。"/>
+    <Section bg="var(--paper-100)">
+      <div style={{textAlign:'center',marginBottom:'clamp(28px,4vw,48px)'}}><SectionLabel align="center" sub="お問い合わせの内容をお選びください">CONTACT CATEGORY</SectionLabel></div>
+      <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':'repeat(4,1fr)',gap:'clamp(12px,1.4vw,20px)'}}>
+        {cats.map((c,i)=><Reveal key={i} delay={i*60}><div style={{background:'var(--paper-050)',padding:mob?'24px 18px':'clamp(22px,2.4vw,32px) clamp(18px,2vw,26px)',textAlign:'center',border:'1px solid var(--ink-100)',height:'100%'}}>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-700)" strokeWidth="1" style={{margin:'0 auto 18px'}}><path d={c.path}/></svg>
+          <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:mob?13:14,fontWeight:500}}>{c.t}</div>
+          {!mob&&<p style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,lineHeight:1.9,color:'var(--ink-500)',marginTop:12}}>{c.d}</p>}
+        </div></Reveal>)}
+      </div>
+    </Section>
+    <Section>
+      <div style={{display:'grid',gridTemplateColumns:mob||tab?'1fr':'1.5fr 1fr',gap:mob?40:'clamp(36px,6vw,80px)'}}>
+        <div>
+          <SectionLabel size="sm">お問い合わせフォーム</SectionLabel>
+          <div style={{marginTop:24,display:'flex',flexDirection:'column',gap:16}}>
+            <div style={{display:'grid',gridTemplateColumns:mob?'1fr':'1fr 1fr',gap:16}}><Input label="お名前" placeholder="山田 太郎"/><Input label="メールアドレス" placeholder="you@example.com"/></div>
+            <Input label="件名" placeholder="お問い合わせの件名"/>
+            <Input label="お問い合わせ内容" multiline rows={mob?5:6} placeholder="ご相談内容をご記入ください"/>
+            <div style={{marginTop:6}}><Btn variant="primary" full size={mob?'md':'lg'} onClick={()=>{setSent(true);setTimeout(()=>setSent(false),2200);}}>{sent?'✓ 送信しました':'送信する'}</Btn></div>
+          </div>
+        </div>
+        <div style={{borderTop:mob?'1px solid var(--ink-100)':'none',borderLeft:mob?'none':'1px solid var(--ink-100)',paddingTop:mob?32:0,paddingLeft:mob?0:'clamp(24px,3vw,48px)'}}>
+          <SectionLabel size="sm">その他のご連絡先</SectionLabel>
+          <div style={{marginTop:24,display:'flex',flexDirection:'column',gap:26}}>
+            {[['メールアドレス','info@astlogic.jp'],['公式LINE','@astlogic_japan'],['営業時間','11:00 - 19:00（不定休）']].map(([k,v])=><div key={k}><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,color:'var(--ink-400)'}}>{k}</div><div style={{fontFamily:'"EB Garamond",serif',fontSize:15,letterSpacing:'0.04em',color:'var(--ink-700)',marginTop:7}}>{v}</div></div>)}
+          </div>
+          <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,lineHeight:1.9,color:'var(--ink-400)',marginTop:32}}>※ 内容を確認後、通常3営業日以内にご返信いたします。</p>
+        </div>
+      </div>
+    </Section>
+  </div>;
+}
+
+/* ────────── MATERIAL ────────── */
+function MaterialScreen({go}){
+  const {mob}=useVP();
+  return <div>
+    <PageHero title="MATERIAL" titleJa="素材について" image={img('about-ring-charcoal.jpg')} height={340} lead="AstLogicが扱う素材と、その物語。備長炭アクセサリーのみ一点物として、その他の素材は通常販売の商品としてお届けします。"/>
+    <Section>
+      <div style={{display:'flex',flexDirection:'column',gap:'clamp(36px,5vw,72px)'}}>
+        {DATA.materials.map((m,i)=><Reveal key={m.code}><div style={{display:'grid',gridTemplateColumns:mob?'1fr':'1fr 1fr',gap:mob?24:'clamp(28px,4vw,64px)',alignItems:'center'}}>
+          <div style={{aspectRatio:'4/3',overflow:'hidden',background:'#0a0a0a',order:mob?1:(i%2?2:1)}}><img src={m.img} alt={m.en} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+          <div style={{order:mob?2:(i%2?1:2)}}>
+            <div style={{display:'flex',alignItems:'center',gap:14}}>
+              <span style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.22em',color:'var(--ink-400)'}}>0{i+1}</span>
+              {m.oneOfOne&&<Tag variant="outline">ONE OF ONE</Tag>}
+            </div>
+            <h3 style={{fontFamily:'"Cormorant Garamond",serif',fontWeight:400,fontSize:mob?'2rem':'clamp(26px,3vw,38px)',letterSpacing:'0.04em',margin:'14px 0 0'}}>{m.code}</h3>
+            <div style={{fontFamily:'"Shippori Mincho",serif',fontSize:13,letterSpacing:'0.16em',color:'var(--ink-500)',marginTop:8}}>{m.name}</div>
+            <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:14,lineHeight:2,color:'var(--ink-500)',marginTop:20,maxWidth:420}}>{m.desc}</p>
+          </div>
+        </div></Reveal>)}
+      </div>
+    </Section>
+  </div>;
+}
+
+/* ================================================================
+   APP
+   ================================================================ */
+const ACTIVE_MAP = {
+  HOME:null, COLLECTION:'COLLECTION', PRODUCT:'COLLECTION',
+  ARCHIVE:'ARCHIVE', ARCHIVE_DETAIL:'ARCHIVE', CRAFTSMANSHIP:'CRAFTSMANSHIP',
+  ABOUT:'ABOUT', JOURNAL:'JOURNAL', CONTACT:'CONTACT', MATERIAL:null,
+};
+
+function App(){
+  const [screen,setScreen]=useState('HOME');
+  const [prodIdx,setProdIdx]=useState(0);
+  const [cart,setCart]=useState(0);
+  const go=useCallback(t=>{if(t==='CART')return;setScreen(t);window.scrollTo({top:0,behavior:'auto'});},[]);
+  const openProduct=useCallback(i=>{setProdIdx(i);setScreen('PRODUCT');window.scrollTo(0,0);},[]);
+  const openArchive=useCallback(()=>{setScreen('ARCHIVE_DETAIL');window.scrollTo(0,0);},[]);
+  const addToCart=useCallback(()=>setCart(c=>c+1),[]);
+  const isHome=screen==='HOME';
+
+  let body;
+  switch(screen){
+    case 'HOME': body=<HomeScreen go={go} openProduct={openProduct}/>; break;
+    case 'COLLECTION': body=<CollectionScreen go={go} openProduct={openProduct}/>; break;
+    case 'PRODUCT': body=<ProductScreen go={go} productIndex={prodIdx} addToCart={addToCart} openProduct={openProduct}/>; break;
+    case 'ARCHIVE': body=<ArchiveScreen go={go} openArchive={openArchive}/>; break;
+    case 'ARCHIVE_DETAIL': body=<ArchiveDetailScreen go={go}/>; break;
+    case 'CRAFTSMANSHIP': body=<CraftsmanshipScreen go={go}/>; break;
+    case 'ABOUT': body=<AboutScreen go={go}/>; break;
+    case 'JOURNAL': body=<JournalScreen go={go}/>; break;
+    case 'CONTACT': body=<ContactScreen go={go}/>; break;
+    case 'MATERIAL': body=<MaterialScreen go={go}/>; break;
+    default: body=<HomeScreen go={go} openProduct={openProduct}/>;
+  }
+
+  const header=<SiteHeader variant={isHome?'transparent':'solid'} tone="dark" active={ACTIVE_MAP[screen]} cartCount={cart} onNav={go}/>;
+
+  return (
+    <div style={{position:'relative'}}>
+      {isHome
+        ? <div style={{position:'absolute',top:0,left:0,right:0,zIndex:100}}>{header}</div>
+        : header}
+      <main>{body}</main>
+      <SiteFooter tone="light" onNav={go}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <VPProvider><App/></VPProvider>
+);
+</script>
+</body>
+</html>
