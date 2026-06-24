@@ -250,8 +250,8 @@ function ProductCard({image,name,nameJa,material,price,ratio='4/3',onClick}){
   const [h,setH]=useState(false);
   return (
     <a href="#" onClick={e=>{e.preventDefault();onClick&&onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'block',color:'inherit'}}>
-      <div style={{position:'relative',width:'100%',aspectRatio:ratio,overflow:'hidden',background:'var(--ink-900)'}}>
-        <img src={image} alt={name} style={{width:'100%',height:'100%',objectFit:'cover',transform:h?'scale(1.045)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
+      <div style={{position:'relative',width:'100%',aspectRatio:ratio,overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}>
+        <img src={image} alt={name} style={{width:'100%',height:'100%',objectFit:'contain',padding:'8%',transform:h?'scale(1.045)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
       </div>
       <div style={{paddingTop:18}}>
         <div style={{fontFamily:'"Cormorant Garamond",serif',fontSize:'1.15rem',letterSpacing:'0.03em',color:'var(--ink-700)',lineHeight:1.2}}>{name}</div>
@@ -267,8 +267,8 @@ function ArchiveCard({image,archiveNo,title,year,material,soldOut,onClick}){
   const [h,setH]=useState(false);
   return (
     <a href="#" onClick={e=>{e.preventDefault();onClick&&onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'block',color:'inherit'}}>
-      <div style={{width:'100%',aspectRatio:'1/1',overflow:'hidden',background:'var(--ink-900)'}}>
-        <img src={image} alt={title} style={{width:'100%',height:'100%',objectFit:'cover',transform:h?'scale(1.04)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
+      <div style={{width:'100%',aspectRatio:'1/1',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}>
+        <img src={image} alt={title} style={{width:'100%',height:'100%',objectFit:'contain',padding:'8%',transform:h?'scale(1.04)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
       </div>
       <div style={{paddingTop:16}}>
         <div style={{fontFamily:'"EB Garamond",serif',fontSize:'0.6875rem',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--ink-400)'}}>{archiveNo}</div>
@@ -399,10 +399,10 @@ function HomeScreen({go,openProduct}){
       <img src={img('home-hero.jpg')} alt="" style={{position:'absolute',top:0,right:0,height:'100%',width:mob?'100%':'48%',objectFit:'cover'}}/>
       <span style={{position:'absolute',inset:0,background:mob?'linear-gradient(180deg,rgba(250,249,247,0.92) 0%,rgba(250,249,247,0.75) 45%,rgba(250,249,247,0.35) 75%,var(--paper-050) 100%)':'linear-gradient(90deg,var(--paper-050) 0%,var(--paper-050) 48%,rgba(250,249,247,0.6) 56%,rgba(250,249,247,0) 70%)'}}/>
       <div style={{position:'relative',maxWidth:'1440px',margin:'0 auto',width:'100%',padding:`0 ${g}`,marginTop:mob?60:0}}>
-        <Reveal>
-          <h1 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'2rem':'clamp(34px,5vw,60px)',lineHeight:1.5,letterSpacing:'0.12em',color:'var(--ink-700)',margin:0}}>自然が創り出す、<br/>唯一無二の造形美。</h1>
-          <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:mob?14:'1rem',lineHeight:2,letterSpacing:'0.08em',color:'var(--ink-500)',marginTop:24,maxWidth:440}}>備長炭と貴金属が出会い、時を超える美しさを生み出す。<br/>AstLogicは、日本から生まれたラグジュアリーアクセサリーブランドです。</p>
-        </Reveal>
+        <div>
+          <h1 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'1.7rem':'clamp(34px,5vw,60px)',lineHeight:1.5,letterSpacing:'0.12em',color:'var(--ink-700)',margin:0,maxWidth:mob?'70%':'none'}}>自然が創り出す、<br/>唯一無二の造形美。</h1>
+          <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:mob?13:'1rem',lineHeight:2,letterSpacing:'0.08em',color:'var(--ink-500)',marginTop:24,maxWidth:mob?'65%':440}}>備長炭と貴金属が出会い、時を超える美しさを生み出す。<br/>AstLogicは、日本から生まれたラグジュアリーアクセサリーブランドです。</p>
+        </div>
       </div>
       {!mob&&<div style={{position:'absolute',left:g,bottom:48,display:'flex',alignItems:'center',gap:14,writingMode:'vertical-rl',fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.3em',textTransform:'uppercase',color:'var(--ink-400)'}}>SCROLL<span style={{writingMode:'horizontal-tb',width:1,height:48,background:'var(--ink-300)'}}/></div>}
     </section>
@@ -445,7 +445,7 @@ function HomeScreen({go,openProduct}){
     <Section bg="var(--paper-100)">
       <SectionHead label="COLLECTIONS" center/>
       <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':'repeat(4,1fr)',gap:mob?'16px 12px':'clamp(12px,1.6vw,24px)'}}>
-        {DATA.collections.map((c,i)=><Reveal key={i} delay={i*60}><div style={{textAlign:'center'}}><a href="#" onClick={e=>{e.preventDefault();go('COLLECTION');}}><div style={{aspectRatio:'4/3',overflow:'hidden',background:'#0a0a0a'}}><img src={c.img} alt={c.label} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div></a><div style={{fontFamily:'"EB Garamond",serif',fontSize:mob?11:13,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-700)',marginTop:16}}>{c.label}</div><div style={{width:20,height:1,background:'var(--ink-300)',margin:'10px auto 0'}}/></div></Reveal>)}
+        {DATA.collections.map((c,i)=><Reveal key={i} delay={i*60}><div style={{textAlign:'center'}}><a href="#" onClick={e=>{e.preventDefault();go('COLLECTION');}}><div style={{aspectRatio:'4/3',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}><img src={c.img} alt={c.label} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div></a><div style={{fontFamily:'"EB Garamond",serif',fontSize:mob?11:13,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--ink-700)',marginTop:16}}>{c.label}</div><div style={{width:20,height:1,background:'var(--ink-300)',margin:'10px auto 0'}}/></div></Reveal>)}
       </div>
     </Section>
 
@@ -479,7 +479,7 @@ function HomeScreen({go,openProduct}){
         <span style={{fontFamily:'"EB Garamond",serif',fontSize:12,letterSpacing:'0.08em',color:'var(--ink-400)'}}>@astlogic_japan</span>
       </div>
       <div style={{display:'grid',gridTemplateColumns:mob?'repeat(4,1fr)':'repeat(7,1fr)',gap:mob?6:10}}>
-        {[...DATA.archive,DATA.featured[0]].slice(0,mob?4:7).map((p,i)=><div key={i} style={{aspectRatio:'1/1',overflow:'hidden',background:'#0a0a0a'}}><img src={p.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>)}
+        {[...DATA.archive,DATA.featured[0]].slice(0,mob?4:7).map((p,i)=><div key={i} style={{aspectRatio:'1/1',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}><img src={p.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>)}
       </div>
     </Section>
   </div>;
@@ -510,7 +510,7 @@ function CollectionScreen({go,openProduct}){
     <Section py="clamp(36px,4vw,72px)">
       {cat==='ALL'?
         <div style={{display:'grid',gridTemplateColumns:mob?'1fr':'repeat(2,1fr)',gap:mob?16:'clamp(14px,1.8vw,26px)'}}>
-          {DATA.collections.map((c,i)=><Reveal key={i} delay={i*70}><a href="#" onClick={e=>{e.preventDefault();setCat(c.label);}} style={{position:'relative',display:'block',aspectRatio:'3/2',overflow:'hidden',background:'#0a0a0a'}}><img src={c.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/><span style={{position:'absolute',inset:0,background:'var(--scrim-full)'}}/><div style={{position:'absolute',bottom:0,left:0,right:0,padding:mob?'20px 18px':'28px 32px',color:'var(--text-on-dark)'}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:mob?14:18,letterSpacing:'0.22em',textTransform:'uppercase'}}>{c.label}</div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,letterSpacing:'0.12em',color:'var(--text-on-dark-s)',marginTop:6}}>{c.ja}</div><div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.16em',textTransform:'uppercase',marginTop:12,display:'inline-flex',gap:8}}>VIEW ALL →</div></div></a></Reveal>)}
+          {DATA.collections.map((c,i)=><Reveal key={i} delay={i*70}><a href="#" onClick={e=>{e.preventDefault();setCat(c.label);}} style={{position:'relative',display:'block',aspectRatio:'3/2',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}><img src={c.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/><span style={{position:'absolute',inset:0,background:'var(--scrim-full)'}}/><div style={{position:'absolute',bottom:0,left:0,right:0,padding:mob?'20px 18px':'28px 32px',color:'var(--text-on-dark)'}}><div style={{fontFamily:'"EB Garamond",serif',fontSize:mob?14:18,letterSpacing:'0.22em',textTransform:'uppercase'}}>{c.label}</div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:12,letterSpacing:'0.12em',color:'var(--text-on-dark-s)',marginTop:6}}>{c.ja}</div><div style={{fontFamily:'"EB Garamond",serif',fontSize:10,letterSpacing:'0.16em',textTransform:'uppercase',marginTop:12,display:'inline-flex',gap:8}}>VIEW ALL →</div></div></a></Reveal>)}
         </div>
       : <div style={{display:'grid',gridTemplateColumns:mob?'repeat(2,1fr)':tab?'repeat(3,1fr)':'repeat(4,1fr)',gap:mob?'24px 16px':'clamp(18px,2vw,36px)'}}>
           {list.map((p,i)=><Reveal key={p.name} delay={i*50}><ProductCard {...p} image={p.img} onClick={()=>openProduct(DATA.products.indexOf(p))}/></Reveal>)}
@@ -660,7 +660,7 @@ function JournalScreen({go}){
     </div>
     <Section py="clamp(36px,5vw,72px)">
       <div style={{display:'grid',gridTemplateColumns:mob?'1fr':tab?'repeat(2,1fr)':'repeat(3,1fr)',gap:'clamp(28px,3vw,48px) clamp(16px,2vw,36px)'}}>
-        {list.map((j,i)=><Reveal key={i} delay={mob?0:i*50}><a href="#" onClick={e=>e.preventDefault()} style={{color:'inherit',display:'block'}}><div style={{aspectRatio:'3/2',overflow:'hidden',background:'#0a0a0a'}}><img src={j.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div><div style={{display:'flex',gap:14,alignItems:'center',marginTop:16}}><Tag variant="outline">{j.cat}</Tag><span style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.08em',color:'var(--ink-400)'}}>{j.date}</span></div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:15,lineHeight:1.7,color:'var(--ink-700)',marginTop:12}}>{j.title}</div></a></Reveal>)}
+        {list.map((j,i)=><Reveal key={i} delay={mob?0:i*50}><a href="#" onClick={e=>e.preventDefault()} style={{color:'inherit',display:'block'}}><div style={{aspectRatio:'3/2',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}><img src={j.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div><div style={{display:'flex',gap:14,alignItems:'center',marginTop:16}}><Tag variant="outline">{j.cat}</Tag><span style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.08em',color:'var(--ink-400)'}}>{j.date}</span></div><div style={{fontFamily:'"Shippori Mincho",serif',fontSize:15,lineHeight:1.7,color:'var(--ink-700)',marginTop:12}}>{j.title}</div></a></Reveal>)}
       </div>
     </Section>
   </div>;
@@ -677,7 +677,7 @@ function CraftsmanshipScreen({go}){
       <div style={{display:'grid',gridTemplateColumns:mob?'1fr':tab?'repeat(2,1fr)':'repeat(3,1fr)',gap:mob?40:'clamp(28px,3vw,52px)'}}>
         {DATA.process.map((s,i)=><Reveal key={s.n} delay={mob?0:i*60}><div>
           <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}><span style={{fontFamily:'"Cormorant Garamond",serif',fontSize:20,letterSpacing:'0.04em',color:'var(--ink-400)'}}>{s.n}</span><span style={{fontFamily:'"Shippori Mincho",serif',fontSize:15,fontWeight:500,color:'var(--ink-700)'}}>{s.t}</span></div>
-          <div style={{aspectRatio:'3/2',overflow:'hidden',background:'#0a0a0a'}}><img src={stepImg[i]} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+          <div style={{aspectRatio:'3/2',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}><img src={stepImg[i]} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
           <p style={{fontFamily:'"Shippori Mincho",serif',fontSize:12.5,lineHeight:1.9,color:'var(--ink-500)',marginTop:14}}>{s.d}</p>
         </div></Reveal>)}
       </div>
@@ -785,7 +785,7 @@ function MaterialScreen({go}){
     <Section>
       <div style={{display:'flex',flexDirection:'column',gap:'clamp(36px,5vw,72px)'}}>
         {DATA.materials.map((m,i)=><Reveal key={m.code}><div style={{display:'grid',gridTemplateColumns:mob?'1fr':'1fr 1fr',gap:mob?24:'clamp(28px,4vw,64px)',alignItems:'center'}}>
-          <div style={{aspectRatio:'4/3',overflow:'hidden',background:'#0a0a0a',order:mob?1:(i%2?2:1)}}><img src={m.img} alt={m.en} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
+          <div style={{aspectRatio:'4/3',overflow:'hidden',background:'var(--paper-100,#f3f1ed)',order:mob?1:(i%2?2:1)}}><img src={m.img} alt={m.en} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>
           <div style={{order:mob?2:(i%2?1:2)}}>
             <div style={{display:'flex',alignItems:'center',gap:14}}>
               <span style={{fontFamily:'"EB Garamond",serif',fontSize:11,letterSpacing:'0.22em',color:'var(--ink-400)'}}>0{i+1}</span>
