@@ -73,60 +73,72 @@ const I = './img/';
 const P = './img/products/';
 function img(name){ return I + name; }
 
-/* Product collection images */
-const PROD_IMG = {
-  line:     P+'01-line-ring.png',
-  section:  P+'02-cross-section-ring.png',
-  crack:    P+'03-crack-ring.png',
-  inlay:    P+'05-inlay-ring.png',
-  hammered: P+'07-hammered-ring.png',
-  epoxy:    P+'08-epoxy-ring.png',
+/* Individual product images */
+const R = {
+  '01a': P+'01a-center-line.png',
+  '01b': P+'01b-double-line.png',
+  '01c': P+'01c-diagonal-line.png',
+  '02a': P+'02a-round-section.png',
+  '02b': P+'02b-oval-section.png',
+  '02c': P+'02c-rectangle-section.png',
+  '03a': P+'03a-straight-crack.png',
+  '03b': P+'03b-lightning-crack.png',
+  '03c': P+'03c-fault-crack.png',
+  '05a': P+'05a-square-inlay.png',
+  '05b': P+'05b-oval-inlay.png',
+  '05c': P+'05c-band-inlay.png',
+  '07a': P+'07a-hammered-black.png',
+  '07b': P+'07b-smoked-koumaru.png',
+  '07c': P+'07c-hammered-wide.png',
+  '08a': P+'08a-dome-epoxy.png',
+  '08b': P+'08b-smoke-epoxy.png',
+  '08c': P+'08c-flat-epoxy.png',
 };
 
 /* ────────── Data ────────── */
 const DATA = {
   featured: [
-    { img: PROD_IMG.line, name:'Line Ring', nameJa:'ラインリング', material:'Silver925 / Binchotan', price:'¥49,500' },
-    { img: PROD_IMG.crack, name:'Crack Ring', nameJa:'クラックリング', material:'Silver925 / Binchotan', price:'¥55,000' },
-    { img: PROD_IMG.section, name:'Cross-Section Ring', nameJa:'断面リング', material:'Silver925 / Binchotan', price:'¥63,000' },
+    { img: R['01a'], name:'Center Line', nameJa:'センターライン', material:'Silver925 / Binchotan', price:'¥49,500' },
+    { img: R['03b'], name:'Lightning Crack', nameJa:'稲妻クラック', material:'Silver925 / Binchotan', price:'¥58,000' },
+    { img: R['02a'], name:'Round Cross-Section', nameJa:'ラウンド断面', material:'Silver925 / Binchotan', price:'¥63,000' },
   ],
   collections: [
-    { img: PROD_IMG.line, label:'LINE', ja:'ラインリング' },
-    { img: PROD_IMG.section, label:'CROSS-SECTION', ja:'断面リング' },
-    { img: PROD_IMG.crack, label:'CRACK', ja:'クラックリング' },
-    { img: PROD_IMG.inlay, label:'INLAY', ja:'炭粒子インレイ' },
-    { img: PROD_IMG.hammered, label:'HAMMERED', ja:'燻し銀 / 槌目' },
-    { img: PROD_IMG.epoxy, label:'EPOXY', ja:'エポキシ封入' },
+    { img: R['01a'], label:'LINE', ja:'ラインリング' },
+    { img: R['02a'], label:'CROSS-SECTION', ja:'断面リング' },
+    { img: R['03a'], label:'CRACK', ja:'クラックリング' },
+    { img: R['05a'], label:'INLAY', ja:'炭粒子インレイ' },
+    { img: R['07a'], label:'HAMMERED', ja:'燻し銀 / 槌目' },
+    { img: R['08a'], label:'EPOXY', ja:'エポキシ封入' },
   ],
   products: [
-    { img: PROD_IMG.line, name:'Line Ring - Center', nameJa:'センターライン', material:'Silver925 / Binchotan', price:'¥49,500', cat:'LINE' },
-    { img: PROD_IMG.line, name:'Line Ring - Double', nameJa:'ダブルライン', material:'Silver925 / Binchotan', price:'¥52,000', cat:'LINE' },
-    { img: PROD_IMG.line, name:'Line Ring - Diagonal', nameJa:'斜めライン', material:'Silver925 / Binchotan', price:'¥52,000', cat:'LINE' },
-    { img: PROD_IMG.section, name:'Round Cross-Section', nameJa:'ラウンド断面', material:'Silver925 / Binchotan', price:'¥63,000', cat:'CROSS-SECTION' },
-    { img: PROD_IMG.section, name:'Oval Cross-Section', nameJa:'オーバル断面', material:'Silver925 / Binchotan', price:'¥63,000', cat:'CROSS-SECTION' },
-    { img: PROD_IMG.section, name:'Rectangle Cross-Section', nameJa:'レクタングル断面', material:'Silver925 / Binchotan', price:'¥66,000', cat:'CROSS-SECTION' },
-    { img: PROD_IMG.crack, name:'Straight Crack', nameJa:'直線クラック', material:'Silver925 / Binchotan', price:'¥55,000', cat:'CRACK' },
-    { img: PROD_IMG.crack, name:'Lightning Crack', nameJa:'稲妻クラック', material:'Silver925 / Binchotan', price:'¥58,000', cat:'CRACK' },
-    { img: PROD_IMG.crack, name:'Fault Crack', nameJa:'断層クラック', material:'Silver925 / Binchotan', price:'¥58,000', cat:'CRACK' },
-    { img: PROD_IMG.inlay, name:'Square Inlay Top', nameJa:'スクエア粒子トップ', material:'Silver925 / Binchotan', price:'¥72,000', cat:'INLAY' },
-    { img: PROD_IMG.inlay, name:'Oval Inlay Top', nameJa:'オーバル粒子トップ', material:'Silver925 / Binchotan', price:'¥72,000', cat:'INLAY' },
-    { img: PROD_IMG.inlay, name:'Band Full Inlay', nameJa:'バンド全面粒子', material:'Silver925 / Binchotan', price:'¥68,000', cat:'INLAY' },
-    { img: PROD_IMG.hammered, name:'Hammered × Black Line', nameJa:'槌目×黒ライン', material:'Silver925 / Binchotan', price:'¥58,000', cat:'HAMMERED' },
-    { img: PROD_IMG.hammered, name:'Smoked Koumaru', nameJa:'燻し甲丸', material:'Silver925 / Binchotan', price:'¥55,000', cat:'HAMMERED' },
-    { img: PROD_IMG.hammered, name:'Hammered Wide', nameJa:'槌目ワイド', material:'Silver925 / Binchotan', price:'¥62,000', cat:'HAMMERED' },
-    { img: PROD_IMG.epoxy, name:'Clear Dome Epoxy', nameJa:'透明ドーム封入', material:'Silver925 / Binchotan', price:'¥66,000', cat:'EPOXY' },
-    { img: PROD_IMG.epoxy, name:'Smoke Epoxy', nameJa:'スモーク封入', material:'Silver925 / Binchotan', price:'¥66,000', cat:'EPOXY' },
-    { img: PROD_IMG.epoxy, name:'Flat Epoxy Top', nameJa:'フラット封入トップ', material:'Silver925 / Binchotan', price:'¥63,000', cat:'EPOXY' },
+    { img: R['01a'], name:'Center Line', nameJa:'センターライン', material:'Silver925 / Binchotan', price:'¥49,500', cat:'LINE' },
+    { img: R['01b'], name:'Double Line', nameJa:'ダブルライン', material:'Silver925 / Binchotan', price:'¥52,000', cat:'LINE' },
+    { img: R['01c'], name:'Diagonal Line', nameJa:'斜めライン', material:'Silver925 / Binchotan', price:'¥52,000', cat:'LINE' },
+    { img: R['02a'], name:'Round Cross-Section', nameJa:'ラウンド断面', material:'Silver925 / Binchotan', price:'¥63,000', cat:'CROSS-SECTION' },
+    { img: R['02b'], name:'Oval Cross-Section', nameJa:'オーバル断面', material:'Silver925 / Binchotan', price:'¥63,000', cat:'CROSS-SECTION' },
+    { img: R['02c'], name:'Rectangle Cross-Section', nameJa:'レクタングル断面', material:'Silver925 / Binchotan', price:'¥66,000', cat:'CROSS-SECTION' },
+    { img: R['03a'], name:'Straight Crack', nameJa:'直線クラック', material:'Silver925 / Binchotan', price:'¥55,000', cat:'CRACK' },
+    { img: R['03b'], name:'Lightning Crack', nameJa:'稲妻クラック', material:'Silver925 / Binchotan', price:'¥58,000', cat:'CRACK' },
+    { img: R['03c'], name:'Fault Crack', nameJa:'断層クラック', material:'Silver925 / Binchotan', price:'¥58,000', cat:'CRACK' },
+    { img: R['05a'], name:'Square Inlay Top', nameJa:'スクエア粒子トップ', material:'Silver925 / Binchotan', price:'¥72,000', cat:'INLAY' },
+    { img: R['05b'], name:'Oval Inlay Top', nameJa:'オーバル粒子トップ', material:'Silver925 / Binchotan', price:'¥72,000', cat:'INLAY' },
+    { img: R['05c'], name:'Band Full Inlay', nameJa:'バンド全面粒子', material:'Silver925 / Binchotan', price:'¥68,000', cat:'INLAY' },
+    { img: R['07a'], name:'Hammered × Black Line', nameJa:'槌目×黒ライン', material:'Silver925 / Binchotan', price:'¥58,000', cat:'HAMMERED' },
+    { img: R['07b'], name:'Smoked Koumaru', nameJa:'燻し甲丸', material:'Silver925 / Binchotan', price:'¥55,000', cat:'HAMMERED' },
+    { img: R['07c'], name:'Hammered Wide', nameJa:'槌目ワイド', material:'Silver925 / Binchotan', price:'¥62,000', cat:'HAMMERED' },
+    { img: R['08a'], name:'Clear Dome Epoxy', nameJa:'透明ドーム封入', material:'Silver925 / Binchotan', price:'¥66,000', cat:'EPOXY' },
+    { img: R['08b'], name:'Smoke Epoxy', nameJa:'スモーク封入', material:'Silver925 / Binchotan', price:'¥66,000', cat:'EPOXY' },
+    { img: R['08c'], name:'Flat Epoxy Top', nameJa:'フラット封入トップ', material:'Silver925 / Binchotan', price:'¥63,000', cat:'EPOXY' },
   ],
   archive: [
-    { img: PROD_IMG.crack, no:'Archive No.063', title:'直線クラック', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.section, no:'Archive No.062', title:'ラウンド断面', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.epoxy, no:'Archive No.061', title:'透明ドーム封入', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.line, no:'Archive No.060', title:'センターライン', year:'2024', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.inlay, no:'Archive No.059', title:'スクエア粒子トップ', year:'2023', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.hammered, no:'Archive No.058', title:'槌目×黒ライン', year:'2023', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.crack, no:'Archive No.057', title:'稲妻クラック', year:'2023', material:'SILVER 925 / BINCHOTAN' },
-    { img: PROD_IMG.section, no:'Archive No.056', title:'オーバル断面', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['03a'], no:'Archive No.063', title:'直線クラック', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['02a'], no:'Archive No.062', title:'ラウンド断面', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['08a'], no:'Archive No.061', title:'透明ドーム封入', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['01a'], no:'Archive No.060', title:'センターライン', year:'2024', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['05a'], no:'Archive No.059', title:'スクエア粒子トップ', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['07a'], no:'Archive No.058', title:'槌目×黒ライン', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['03b'], no:'Archive No.057', title:'稲妻クラック', year:'2023', material:'SILVER 925 / BINCHOTAN' },
+    { img: R['02b'], no:'Archive No.056', title:'オーバル断面', year:'2023', material:'SILVER 925 / BINCHOTAN' },
   ],
   process: [
     { n:'01', t:'備長炭の選定', d:'長年の経験から、形状・割れ・質感などを見極め、作品にふさわしい備長炭を選び抜きます。' },
@@ -143,10 +155,10 @@ const DATA = {
     { code:'PLATINUM', name:'プラチナ', en:'Platinum', oneOfOne:false, desc:'希少で変質しにくい白金。静かで深い輝きが、造形の陰影を引き立てます。', img: img('piece-08.jpg') },
   ],
   journal: [
-    { img: PROD_IMG.crack, cat:'PRODUCT', date:'2026.07.12', title:'新作「クラックリング」公開' },
+    { img: R['03b'], cat:'PRODUCT', date:'2026.07.12', title:'新作「クラックリング」公開' },
     { img: img('craft-portrait.jpg'), cat:'CRAFTSMANSHIP', date:'2026.06.28', title:'職人の手仕事について' },
     { img: img('contact-hero.jpg'), cat:'EVENT', date:'2026.06.05', title:'POPUP STORE TOKYO 開催' },
-    { img: PROD_IMG.section, cat:'STORY', date:'2026.05.20', title:'なぜ、備長炭なのか' },
+    { img: R['02a'], cat:'STORY', date:'2026.05.20', title:'なぜ、備長炭なのか' },
   ],
   news: [
     { date:'2026.07.12', title:'POPUP STORE TOKYO' },
@@ -384,8 +396,8 @@ function HomeScreen({go,openProduct}){
   return <div>
     {/* HERO */}
     <section style={{position:'relative',minHeight:mob?'100svh':'92vh',background:'var(--paper-050)',overflow:'hidden',display:'flex',alignItems:'center'}}>
-      <img src={img('home-hero.jpg')} alt="" style={{position:'absolute',top:0,right:0,height:'100%',width:mob?'100%':'64%',objectFit:'cover'}}/>
-      <span style={{position:'absolute',inset:0,background:mob?'linear-gradient(180deg,rgba(250,249,247,0.18) 0%,rgba(250,249,247,0.72) 55%,var(--paper-050) 100%)':'linear-gradient(90deg,var(--paper-050) 0%,rgba(250,249,247,0.5) 22%,rgba(250,249,247,0) 48%)'}}/>
+      <img src={img('home-hero.jpg')} alt="" style={{position:'absolute',top:0,right:0,height:'100%',width:mob?'100%':'55%',objectFit:'cover'}}/>
+      <span style={{position:'absolute',inset:0,background:mob?'linear-gradient(180deg,rgba(250,249,247,0.85) 0%,rgba(250,249,247,0.6) 40%,rgba(250,249,247,0.3) 70%,var(--paper-050) 100%)':'linear-gradient(90deg,var(--paper-050) 0%,var(--paper-050) 38%,rgba(250,249,247,0.7) 50%,rgba(250,249,247,0) 65%)'}}/>
       <div style={{position:'relative',maxWidth:'1440px',margin:'0 auto',width:'100%',padding:`0 ${g}`,marginTop:mob?60:0}}>
         <Reveal>
           <h1 style={{fontFamily:'"Shippori Mincho",serif',fontWeight:500,fontSize:mob?'2rem':'clamp(34px,5vw,60px)',lineHeight:1.5,letterSpacing:'0.12em',color:'var(--ink-700)',margin:0}}>自然が創り出す、<br/>唯一無二の造形美。</h1>
