@@ -250,7 +250,7 @@ function ProductCard({image,name,nameJa,material,price,ratio='4/3',onClick}){
   const [h,setH]=useState(false);
   return (
     <a href="#" onClick={e=>{e.preventDefault();onClick&&onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'block',color:'inherit'}}>
-      <div style={{position:'relative',width:'100%',aspectRatio:ratio,overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}>
+      <div style={{position:'relative',width:'100%',aspectRatio:ratio,overflow:'hidden',background:'#fff'}}>
         <img src={image} alt={name} style={{width:'100%',height:'100%',objectFit:'contain',padding:'8%',transform:h?'scale(1.045)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
       </div>
       <div style={{paddingTop:18}}>
@@ -267,7 +267,7 @@ function ArchiveCard({image,archiveNo,title,year,material,soldOut,onClick}){
   const [h,setH]=useState(false);
   return (
     <a href="#" onClick={e=>{e.preventDefault();onClick&&onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'block',color:'inherit'}}>
-      <div style={{width:'100%',aspectRatio:'1/1',overflow:'hidden',background:'var(--paper-100,#f3f1ed)'}}>
+      <div style={{width:'100%',aspectRatio:'1/1',overflow:'hidden',background:'#fff'}}>
         <img src={image} alt={title} style={{width:'100%',height:'100%',objectFit:'contain',padding:'8%',transform:h?'scale(1.04)':'scale(1)',transition:`transform var(--dur-reveal) var(--ease-out)`}} />
       </div>
       <div style={{paddingTop:16}}>
